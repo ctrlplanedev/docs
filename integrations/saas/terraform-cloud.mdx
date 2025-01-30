@@ -1,0 +1,137 @@
+---
+title: Terraform Cloud
+description: "Terraform Cloud integration"
+---
+
+## CLI Scanner
+
+The Terraform Cloud scanner syncs workspaces from your Terraform Cloud account
+into Ctrlplane, allowing you to deploy, upgrade and manage workspaces.
+
+### Usage
+
+To sync in all Terraform Cloud workspaces, you'll need:
+
+1. A Terraform Cloud API key with read access to your workspaces
+2. Your Terraform Cloud organization name (e.g. `example`)
+
+To see all available options, run:
+
+```bash
+ctrlc sync tfe --help
+```
+
+Here is a basic example of how to sync in all Terraform Cloud workspaces:
+
+```bash
+ctrlc sync tfe \
+    --tfe-token <TFE_TOKEN> \
+    --organization <TFE_ORG> \
+    --interval 5m
+```
+
+## Resource Schemas
+
+### Workspace
+
+When syncing workspaces from Terraform Cloud, each workspace will have the
+following schema:
+
+<ResponseField name="version" type="string" default="terraform-cloud/v1">
+  The version of the schema
+</ResponseField>
+
+<ResponseField name="kind" type="string" default="Workspace">
+  The type of resource
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  Name of the workspace
+</ResponseField>
+
+<ResponseField name="identifier" type="string">
+  The unique identifier of the workspace
+</ResponseField>
+
+<ResponseField name="config" type="Terraform Cloud workspace config">
+  <Expandable title="properties">
+    <ResponseField name="id" type="string">
+      The unique identifier of the workspace
+    </ResponseField>
+
+    <ResponseField name="name" type="string">
+      The name of the workspace
+    </ResponseField>
+
+    <ResponseField name="organization" type="string">
+      The organization the workspace belongs to
+    </ResponseField>
+
+    <ResponseField name="autoApply" type="boolean">
+      Whether auto apply is enabled for the workspace
+    </ResponseField>
+
+    <ResponseField name="terraformVersion" type="string">
+      The version of Terraform used by the workspace
+    </ResponseField>
+
+    <ResponseField name="vcsRepo" type="object">
+      The VCS repository configuration
+      <Expandable title="properties">
+        <ResponseField name="identifier" type="string">
+          The repository identifier
+        </ResponseField>
+
+        <ResponseField name="branch" type="string">
+          The branch to use
+        </ResponseField>
+
+        <ResponseField name="repositoryHttpUrl" type="string">
+          The HTTP URL of the repository
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="metadata" type="Terraform Cloud workspace metadata">
+  <Expandable title="properties">
+    <ResponseField name="ctrlplane/external-id" type="string">
+      The unique identifier of the workspace (e.g. `ws-a7b3c9d2e5f8g1h4`)
+    </ResponseField>
+
+    <ResponseField name="ctrlplane/links" type="string">
+      Links to related resources (e.g. `{"Terraform Workspace":"<url to workspace>"}`)
+    </ResponseField>
+
+    <ResponseField name="terraform-cloud/organization" type="string">
+      The organization the workspace belongs to (e.g. `myorg`)
+    </ResponseField>
+
+    <ResponseField name="terraform-cloud/workspace-name" type="string">
+      The name of the workspace (e.g. `ci-kubernetes-runtime`)
+    </ResponseField>
+
+    <ResponseField name="terraform-cloud/workspace-auto-apply" type="string">
+      Whether auto apply is enabled (e.g. `true`)
+    </ResponseField>
+
+    <ResponseField name="terraform-cloud/vcs-repo/identifier" type="string">
+      The repository identifier (e.g. `myorg/myrepo`)
+    </ResponseField>
+
+    <ResponseField name="terraform-cloud/vcs-repo/branch" type="string">
+      The branch to use
+    </ResponseField>
+
+    <ResponseField name="terraform-cloud/vcs-repo/repository-http-url" type="string">
+      The HTTP URL of the repository (e.g. `https://github.com/myorg/myrepo`)
+    </ResponseField>
+
+    <ResponseField name="terraform/version" type="string">
+      The version of Terraform used (e.g. `1.5.0`)
+    </ResponseField>
+
+  </Expandable>
+</ResponseField>

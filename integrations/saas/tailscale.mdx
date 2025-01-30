@@ -1,0 +1,146 @@
+---
+title: Tailscale
+description: "Tailscale integration"
+---
+
+## CLI Scanner
+
+The Tailscale scanner syncs devices from your Tailscale network into Ctrlplane,
+allowing you to deploy, upgrade and manage devices in your Tailscale network.
+
+### Usage
+
+To sync in all Tailscale devices, you'll need:
+
+1. A Tailscale API key with read access to your tailnet
+2. Your tailnet name (e.g. `example.com`)
+
+You can create an API key in the [Tailscale Admin
+Console](https://login.tailscale.com/admin/settings/keys).
+
+To see all available options, run:
+
+```bash
+ctrlc sync tailscale --help
+```
+
+Here is a basic example of how to sync in all Tailscale devices:
+
+```bash
+ctrlc sync tailscale \
+    --tailscale-key <TAILSCALE_KEY> \
+    --tailnet <TAILSCALE_NET> \
+    --interval 5m
+```
+
+## Resource Schemas
+
+### Device
+
+When syncing devices from Tailscale, each device will have the following schema:
+
+<ResponseField name="version" type="string" default="tailscale/v1">
+  The version of the schema
+</ResponseField>
+
+<ResponseField name="kind" type="string" default="Device">
+  The unique identifier of the device
+</ResponseField>
+
+<ResponseField name="version" type="string">
+  Name of the device, defaults to the hostname.
+</ResponseField>
+
+<ResponseField name="identifer" type="string" default="">
+  The unique identifier of the device.
+</ResponseField>
+
+<ResponseField name="config" type="Tailscale resource config">
+  <Expandable title="properties">
+    <ResponseField name="id" type="string">
+      The unique identifier of the device
+    </ResponseField>
+
+    <ResponseField name="os" type="string">
+      The operating system of the device
+    </ResponseField>
+
+    <ResponseField name="name" type="string">
+      The full DNS name of the device
+    </ResponseField>
+
+    <ResponseField name="nodeKey" type="string">
+      The node key used to authenticate the device
+    </ResponseField>
+
+    <ResponseField name="hostname" type="string">
+      The hostname of the device
+    </ResponseField>
+
+    <ResponseField name="addresses" type="string[]">
+      The IPv4 and IPv6 addresses assigned to the device
+    </ResponseField>
+
+    <ResponseField name="isExternal" type="boolean">
+      Whether the device is external to the tailnet
+    </ResponseField>
+
+    <ResponseField name="machineKey" type="string">
+      The machine key used to identify the device
+    </ResponseField>
+
+    <ResponseField name="clientVersion" type="string">
+      The version of the Tailscale client running on the device
+    </ResponseField>
+
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="metadata" type="Tailscale resource metadata" description="The metadata of the device">
+  <Expandable title="properties">
+    <ResponseField name="tailscale/id" type="string">
+      The unique identifier of the device (e.g. `6469981265034464`)
+    </ResponseField>
+
+    <ResponseField name="tailscale/os" type="string">
+      The operating system of the device (e.g. `linux`)
+    </ResponseField>
+
+    <ResponseField name="tailscale/name" type="string">
+      The full DNS name of the device (e.g. `db.tail1dc437.ts.net`)
+    </ResponseField>
+
+    <ResponseField name="tailscale/hostname" type="string">
+      The hostname of the device (e.g. `db`)
+    </ResponseField>
+
+    <ResponseField name="tailscale/addresses" type="string">
+      The IPv4 and IPv6 addresses assigned to the device (e.g. `["100.127.168.84", "fd7a:115c:a1e0::7c01:a854"]`)
+    </ResponseField>
+
+    <ResponseField name="tailscale/is-external" type="string">
+      Whether the device is external to the tailnet (e.g. false)
+    </ResponseField>
+
+    <ResponseField name="tailscale/client-version" type="string">
+      The version of the Tailscale client running on the device (e.g. `1.78.1-t8903926f7-gc4163954e`)
+    </ResponseField>
+
+    <ResponseField name="tailscale/user" type="string">
+      The user associated with the device (e.g. `example@github`)
+    </ResponseField>
+
+    <ResponseField name="tailscale/status" type="string">
+      The connection status of the device (e.g. `connected`)
+    </ResponseField>
+
+    <ResponseField name="tailscale/blocks-incoming-connections" type="string">
+      Whether the device blocks incoming connections
+    </ResponseField>
+
+    <ResponseField name="tailscale/update-available" type="string">
+      Whether an update is available for the device (e.g. `false`)
+    </ResponseField>
+
+  </Expandable>
+</ResponseField>

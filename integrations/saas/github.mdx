@@ -1,0 +1,50 @@
+---
+title: GitHub
+description: "GitHub integration"
+---
+
+## Git Release Provider
+
+Its commone to sync every release from a GitHub to a deployment. Here is an
+example github aciton that creates a release for a given deployment.
+
+```yaml
+on:
+  release:
+    types: [published]
+
+jobs:
+  deploy:
+    uses: ctrlplane/github-action@v1
+```
+
+## GitHub Actions Dispatcher
+
+GitHub Actions Dispatcher allows you to trigger other GitHub Actions workflows
+from a single workflow. This is useful when you want to run multiple workflows
+in parallel or trigger a workflow from another repository.
+
+### Usage
+
+To use the GitHub Actions Dispatcher, you'll need:
+
+1. A GitHub Personal Access Token (PAT) with `repo` scope
+2. The repository name and owner where your workflows are defined
+
+To see all available options, run:
+
+### Example
+
+Here is an example of how to use the GitHub Actions Dispatcher to trigger a workspace:
+
+```yaml
+name: Receiving Workflow
+run-name: Receiving Workflow [${{ inputs.job_id }}]
+
+on:
+  workflow_dispatch:
+    inputs:
+      job_id:
+        description: "Job ID"
+        required: true
+```
