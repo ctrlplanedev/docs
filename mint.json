@@ -6,6 +6,9 @@
     "light": "/logo/light.svg"
   },
   "favicon": "/favicon.svg",
+  "background": {
+    "style": "grid"
+  },
   "colors": {
     "primary": "#6B46C1",
     "light": "#805AD5",
@@ -15,6 +18,7 @@
       "to": "#805AD5"
     }
   },
+  "openapi": "https://raw.githubusercontent.com/ctrlplanedev/ctrlplane/refs/heads/main/openapi.v1.json",
   "topbarLinks": [
     {
       "name": "Support",
@@ -25,6 +29,13 @@
     "name": "Dashboard",
     "url": "https://app.ctrlplane.dev"
   },
+  "api": {
+    "baseUrl": "https://api.ctrlplane.dev/api",
+    "auth": {
+      "method": "key",
+      "name": "x-api-key"
+    }
+  },
   "tabs": [
     {
       "name": "Documentation",
@@ -33,6 +44,14 @@
     {
       "name": "Integrations",
       "url": "integrations"
+    },
+    {
+      "name": "Examples",
+      "url": "examples"
+    },
+    {
+      "name": "Self-Hosted",
+      "url": "self-hosted"
     },
     {
       "name": "API Reference",
@@ -59,18 +78,7 @@
   "navigation": [
     {
       "group": "Get Started",
-      "pages": ["introduction", "quickstart", "development"]
-    },
-    {
-      "group": "Essentials",
-      "pages": [
-        "essentials/markdown",
-        "essentials/code",
-        "essentials/images",
-        "essentials/settings",
-        "essentials/navigation",
-        "essentials/reusable-snippets"
-      ]
+      "pages": ["overview", "introduction", "quickstart"]
     },
     {
       "group": "API Documentation",
@@ -78,11 +86,7 @@
     },
     {
       "group": "Endpoint Examples",
-      "pages": [
-        "api-reference/endpoint/get",
-        "api-reference/endpoint/create",
-        "api-reference/endpoint/delete"
-      ]
+      "pages": ["api-reference/endpoint/resources/create"]
     },
     {
       "group": "Cloud Provider",
@@ -100,11 +104,52 @@
         "integrations/saas/tailscale",
         "integrations/saas/terraform-cloud"
       ]
+    },
+    {
+      "group": "DevEx",
+      "pages": ["examples/devex/ephemeral-environments"]
+    },
+    {
+      "group": "Tooling",
+      "pages": ["examples/tooling/otel-deployment"]
+    },
+    {
+      "group": "Concepts",
+      "pages": [
+        "concepts/systems",
+        "concepts/resources",
+        "concepts/runbooks",
+        "concepts/jobs",
+        "concepts/job-agents",
+        "concepts/deployments",
+        "concepts/releases",
+        "concepts/environments"
+      ]
+    },
+    {
+      "group": "Install",
+      "pages": [
+        "self-hosted/install/docker",
+        "self-hosted/install/kubernetes",
+        {
+          "group": "Terraform",
+          "pages": ["self-hosted/install/terraform/google"]
+        }
+      ]
+    },
+    {
+      "group": "Configuration",
+      "pages": [
+        "self-hosted/config/auth",
+        {
+          "group": "Integrations",
+          "pages": ["self-hosted/config/integrations/github-bot"]
+        }
+      ]
     }
   ],
   "footerSocials": {
-    "x": "https://x.com/mintlify",
-    "github": "https://github.com/mintlify",
-    "linkedin": "https://linkedin.com/company/mintlify"
+    "github": "https://github.com/ctrlplanedev",
+    "linkedin": "https://linkedin.com/company/ctrlplanedev"
   }
 }

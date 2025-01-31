@@ -1,0 +1,169 @@
+---
+title: OTEL Deployment
+description: |
+  At your company, developers can spin up EC2 instances as needed. As the platform team,
+  you want to ensure proper observability by automatically deploying OpenTelemetry collectors
+  to gather metrics and provide standardized monitoring endpoints.
+---
+
+## Requirements
+
+- Automatically deploy OpenTelemetry (OTEL) collectors whenever a new EC2 instance is created
+- Track resource utilization metrics (CPU, memory, disk) across all developer instances
+- Provide developers with a consistent OTLP endpoint they can use for custom metrics
+- Maintain the same deployment configuration in both testing and production environments
+
+### Technologies
+
+<CardGroup cols={2}>
+  <Card title="AWS EC2" icon="cloud">
+    Cloud computing platform that provides scalable compute capacity. We'll use
+    EC2 instances as our deployment targets for running applications and
+    collecting metrics.
+  </Card>
+  <Card title="OpenTelemetry Collector" icon="code">
+    A vendor-agnostic way to receive, process and export telemetry data. The
+    collector will be automatically deployed to gather system metrics and
+    provide a standardized endpoint for custom application metrics.
+  </Card>
+  <Card title="Github Actions" icon="github">
+    CI/CD platform that will automate our deployment pipeline. It will handle
+    the provisioning of collectors and configuration management across all
+    environments.
+  </Card>
+</CardGroup>
+
+## Solution
+
+### 1. Getting EC2 Instances into Ctrlplane
+
+Before deploying OpenTelemetry collectors, EC2 instances must be registered as
+Resources in Ctrlplane. These Resources represent the external state of our EC2
+instances and require consistent updates as the state of each instance changes.
+
+These are just some of the ways you can get EC2 instances into Ctrlplane.
+
+<AccordionGroup>
+  <Accordion title="Using AWS Lambda">
+    AWS Lambda can be used to automatically register EC2 instances in Ctrlplane
+    whenever they are launched. By setting up a Lambda function triggered by
+    CloudWatch Events, you can capture instance launch events and use the
+    Ctrlplane API to create or update resources representing these instances.
+  </Accordion>
+
+{" "}
+
+<Accordion title="Using AWS Systems Manager">
+  AWS Systems Manager provides a way to manage EC2 instances at scale. By
+  integrating Systems Manager with Ctrlplane, you can automatically register
+  instances as they are launched. This can be achieved by using Systems Manager
+  Run Command to execute scripts that call the Ctrlplane API for resource
+  registration.
+</Accordion>
+
+  <Accordion title="Using Ctrlplane CLI">
+    AWS CloudFormation can be used to define and provision EC2 instances as
+    well as register them in Ctrlplane. By including a custom resource in your
+    CloudFormation template, you can trigger a Lambda-backed custom resource
+    that registers the instance in Ctrlplane upon creation.
+  </Accordion>
+</AccordionGroup>
+
+In this tutorial, we'll simplify the process by using the Ctrlplane CLI to
+manage the state of EC2 instances within Ctrlplane. This approach keeps our
+deployment pipeline straightforward and concentrated on the primary task.
+However, a limitation is that the pipeline executes every 10 minutes.
+Consequently, if a new EC2 instance is launched, it won't trigger a deployment
+of OTEL until the next 10-minute cycle.
+
+### 2. Github Deployment Pipeline
+
+```yaml .github/workflows/deploy-otel-agent.yml
+name: Deploy OpenTelemetry Agent
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS CLI
+        run: |
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set region ${{ secrets.AWS_REGION }}
+
+      - name: Fetch EC2 Instance Public IP
+        id: get_ec2_ip
+        run: |
+          INSTANCE_IP=$(aws ec2 describe-instances \
+            --filters "Name=tag:Name,Values=${{ inputs.ec2_name }}" "Name=instance-state-name,Values=running" \
+            --query "Reservations[0].Instances[0].PublicIpAddress" \
+            --output text)
+
+          if [[ "$INSTANCE_IP" == "None" ]]; then
+            echo "EC2 instance not found or does not have a public IP"
+            exit 1
+          fi
+
+          echo "EC2 IP: $INSTANCE_IP"
+          echo "ec2_ip=$INSTANCE_IP" >> $GITHUB_ENV
+
+      - name: Set up SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ env.ec2_ip }} >> ~/.ssh/known_hosts
+
+      - name: Deploy OpenTelemetry Agent
+        run: |
+          ssh ${{ secrets.EC2_USER }}@${{ env.ec2_ip }} << 'EOF'
+            set -e
+
+            # Install OpenTelemetry if not installed
+            if ! command -v otelcol-contrib &> /dev/null; then
+              echo "Installing OpenTelemetry Collector..."
+              sudo apt update && sudo apt install -y curl
+              curl -L https://github.com/open-telemetry/opentelemetry-collector-releases/releases/latest/download/otelcol-contrib-linux-amd64 -o /usr/local/bin/otelcol-contrib
+              sudo chmod +x /usr/local/bin/otelcol-contrib
+            else
+              echo "OpenTelemetry Collector is already installed."
+            fi
+
+            # Create systemd service file for OpenTelemetry
+            sudo tee /etc/systemd/system/otelcol-contrib.service > /dev/null <<EOT
+            [Unit]
+            Description=OpenTelemetry Collector
+            After=network.target
+
+            [Service]
+            ExecStart=/usr/local/bin/otelcol-contrib --config /etc/otelcol-config.yaml
+            Restart=always
+            User=root
+            Group=root
+
+            [Install]
+            WantedBy=multi-user.target
+            EOT
+
+            # Restart and enable the OpenTelemetry service
+            sudo systemctl daemon-reload
+            sudo systemctl enable otelcol-contrib
+            sudo systemctl restart otelcol-contrib
+          EOF
+```
+
+### 3. Policy Configuration
+
+## Conclusion
+
+While this example focuses on AWS EC2, the solution can be applied to any
+resource type. As long as you can create resources representing your deployment
+target in Ctrlplane, you can automate the deployment of OpenTelemetry collectors
+and provide standardized monitoring endpoints for your development teams.
