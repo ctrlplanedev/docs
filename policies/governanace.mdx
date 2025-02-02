@@ -1,0 +1,39 @@
+---
+title: Approval & Governance
+description: |
+  Policies for overseeing and approving deployments, ensuring compliance, 
+  quality, and governance.
+---
+
+## Approval Gates
+
+<Frame>
+  <img src="/policies/images/approval-gates.png" alt="Approval Gates" />
+</Frame>
+
+Approval Gates require authorization before a release, ensuring:
+
+1. **Compliance**: Meet industry standards.
+2. **Quality**: Ensure production-ready releases.
+3. **Change Management**: Document and approve changes.
+4. **Risk Mitigation**: Prevent unauthorized changes.
+5. **Collaboration**: Involve relevant parties.
+
+Approval Gates ensure only approved releases proceed.
+
+## Deployment Validation and Resource Requirements
+
+<Frame>
+  <img
+    src="/policies/images/previous-deploy-status.png"
+    alt="Previous Deploy Status"
+  />
+</Frame>
+
+Ensure consistent deployments by specifying resource requirements in dependent
+environments before triggering releases.
+
+- **Risk Mitigation**: Prevent high-failure releases from advancing.
+- **Validation**: Validate in less critical environments to reduce errors.
+
+<Info>If no parent environment is assigned, this feature is inactive.</Info>

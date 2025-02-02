@@ -1,0 +1,160 @@
+---
+title: First Deployment
+description: |
+  This tutorial series will help you complete your first deployment in Ctrlplane.
+  We’ll walk through the steps to deploy a sample hello world script to run against
+  one or more servers.
+---
+
+To follow this tutorial, you'll need to have:
+
+- A Ctrlplane Workspace in our cloud or self-hosted instance.
+- Install the Ctrlplane CLI
+
+## Create a new System
+
+Systems organize related deployments and environments into logical groups,
+making it easier to manage deployment pipelines and maintain consistency across
+your infrastructure.
+
+To create a new system:
+
+1. Click the `+` button in the top left corner to open the menu
+2. Select `New System` from the dropdown
+3. Give your system a descriptive name, for example, `Hello world`.
+
+<Frame>
+  <img src="/images/first-deployment/new-system-dialog.png" />
+</Frame>
+
+## Create a new Deployment
+
+A deployment represents a complete, end-to-end process for delivering changes to
+your system, organizing principle for managing and orchestrating the release of
+your software or infrastructure across various environments within a system.
+
+1. Click the `+` button in the top left corner to open the menu
+2. Select `New Deployment` from the dropdown
+3. For this example, keep the default option selected.
+4. Give your deployment a descriptive name, for example, `My First Deployment`.
+5. Click `Create`.
+
+<Frame>
+  <img src="/images/first-deployment/new-deployment-dialog.png" />
+</Frame>
+
+## Create a new Resource
+
+Resources in Ctrlplane represent entities that your deployments can target -
+these can be infrastructure components like servers and databases, or abstract
+concepts like API endpoints and service accounts.
+
+For this tutorial, we'll create a simple resource to represent a server:
+
+1. Click the `+` button in the top left corner to open the menu
+2. Select `New Resource` from the dropdown
+3. Fill in the following details:
+
+   | Field         | Value                 | Description                                                               |
+   | :------------ | :-------------------- | :------------------------------------------------------------------------ |
+   | Name          | `server-a`            | A name for your resource                                                  |
+   | Identifier    | `deployment-server-a` | A unique identifier used to reference this resource within your workspace |
+   | Kind          | `Server`              | The type of resource being created                                        |
+   | Version       | `tutorial/v1`         | The API version for this resource type                                    |
+   | Configuration | `{}`                  | Resource-specific configuration options (empty for this tutorial)         |
+   | Metadata      | `tutorial = true`     | Additional metadata tags for organizing resources under environments      |
+
+4. Click `Create`
+
+<Frame>
+  <img src="/images/first-deployment/new-server-resource.png" />
+</Frame>
+
+<Note>
+  In a real deployment, you would configure additional details like connection
+  information and authentication. For this tutorial, we're creating a
+  placeholder resource just to demonstrate the workflow.
+</Note>
+
+## Configuring Environments
+
+When you create a new system, Ctrlplane automatically creates three default
+environments: `QA`, `Staging`, and `Production`. For this simple
+example, we'll keep just one environment and delete the others.
+
+To delete environments:
+
+1. Click on the "Environments" tab in the left sidebar under your system
+2. For each environment you want to delete:
+   - Click on the environment node in the tree view
+   - Click on the three dots menu (⋮) next to the environment name in the top
+     left of the drawer
+   - Click the `Delete` button from the dropdown
+3. Keep only one environment (e.g., `Production`) for this tutorial
+4. Click on the `Production` environment node in the tree view
+5. Go to the `Resources` tab
+6. Here you can create a filter to down to the resources this environment to the
+   resource we previously created (see image below).
+
+<Frame>
+  <img src="/images/first-deployment/configure-production-resources.png" />
+</Frame>
+
+<Note>
+While this tutorial uses a simple single environment setup, real-world
+deployments often require more sophisticated environment organization.
+
+For example, in globally distributed systems, you might organize environments by
+geographic regions.
+
+</Note>
+
+## Create Job Agent
+
+A Job Agent executes deployment tasks. For this tutorial, we'll create a job
+agent to run scripts on your local machine.
+
+1. Download and install the Ctrlplane CLI
+2. Get your API key from `<Workspace Name> > Workspace Settings > API Keys`
+3. Get your workspace ID from `<Workspace Name> > Workspace Settings > General`
+4. Run the following command:
+
+   ```bash
+   ctrlc run exec \
+       --name tutorial-agent \
+       --api-key <your-api-key> \
+       --workspace <your-workspace-id>
+   ```
+
+   This agent will execute scripts that you configure in the UI when jobs are
+   triggered.
+
+Keep this process running as it listens for jobs to execute when deployments are
+triggered.
+
+<Note>
+  Job Agents execute deployment tasks in your infrastructure. In production, you
+  would configure agents with appropriate permissions and access to your
+  deployment targets. For this tutorial, we're using a basic configuration.
+</Note>
+
+## Connect Agent to Deployment
+
+1. Navigate to your deployment settings page
+2. Find the `Job Agents` section
+3. Select your job agent from the dropdown
+4. Add this simple script:
+   ```bash
+   echo "Deploying Hello World {{.release.version}} to {{.resource.name}}"
+   ```
+5. Click `Save`
+
+## Create a Release
+
+1. Go to the release page and click `Create Release`
+2. Enter a name like `v1.0.0`
+3. Click `Create`
+
+## Deploy the Release
+
+When the release is created, the job agent will be triggered. You should see this output in your job agent terminal:

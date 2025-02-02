@@ -1,0 +1,35 @@
+---
+title: Release Channels
+description: |
+  Release channels allow you to specify which release of a given deployment can
+  be deployed to a particular environment.
+---
+
+## Release Channel Policies
+
+Release channel policies define the rules for which releases can be deployed to
+specific environments. This ensures that only the appropriate versions of a
+deployment are released to the right environments, maintaining stability and
+control over the deployment process.
+
+### Common Use Cases
+
+#### Git Commits
+
+When any git commit could be a release:
+
+- Deploying only the `main` branch releases to the production environment to
+  ensure stability.
+- Allowing any branch to be deployed to the QA environment for comprehensive
+  testing and validation.
+
+#### Major Releases
+
+When deploying third party software its common to only want to upgrade to
+minor versions. This means that:
+
+- Only minor version updates (e.g., from `1.1` to `1.2`) are automatically
+  deployed to environments.
+- Major version updates (e.g., from `1.x` to `2.0`) are not automatically
+  deployed. This is because such updates may necessitate policy adjustments to
+  accommodate releases that need manual oversight.

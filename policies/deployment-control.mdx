@@ -1,0 +1,21 @@
+---
+title: Deployment Control
+description: |
+  Deployment control policies regulate execution within environments, managing
+  concurrency, release filtering, and operational constraints to ensure orderly
+  processes without resource overload or rule violations.
+---
+
+## Concurrency Control
+
+<Frame>
+  <img src="/policies/images/concurrency.png" alt="Concurrency Control" />
+</Frame>
+
+Limit concurrent jobs in an environment.
+
+1. **Resource Management**: Stage deployments to prevent CI/CD and infrastructure overload.
+2. **Risk Mitigation**: Staggered deployments reduce widespread failure risks.
+3. **Performance Optimization**: Gradual deployment avoids resource usage spikes.
+
+Applying this policy across environments ensures total job concurrency stays within limits.

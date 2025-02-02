@@ -78,7 +78,7 @@
   "navigation": [
     {
       "group": "Get Started",
-      "pages": ["overview", "introduction", "quickstart"]
+      "pages": ["overview", "introduction", "quickstart", "first-deployment"]
     },
     {
       "group": "API Documentation",
@@ -89,17 +89,26 @@
       "pages": ["api-reference/endpoint/resources/create"]
     },
     {
-      "group": "Cloud Provider",
+      "group": "Cloud Providers",
       "pages": [
         "integrations/cloud-providers/overview",
         "integrations/cloud-providers/aws",
         "integrations/cloud-providers/azure",
-        "integrations/cloud-providers/google"
+        "integrations/cloud-providers/google",
+        "integrations/cloud-providers/digital-ocean"
       ]
     },
     {
-      "group": "SaaS",
+      "group": "Container Orchestration",
       "pages": [
+        "integrations/containers/kubernetes",
+        "integrations/containers/helm"
+      ]
+    },
+    {
+      "group": "SaaS Integrations",
+      "pages": [
+        "integrations/saas/docker-hub",
         "integrations/saas/github",
         "integrations/saas/tailscale",
         "integrations/saas/terraform-cloud"
@@ -145,6 +154,18 @@
           "group": "Integrations",
           "pages": ["self-hosted/config/integrations/github-bot"]
         }
+      ]
+    },
+    {
+      "group": "Policies",
+      "pages": [
+        "policies/overview",
+        "policies/resource-filtering",
+        "policies/governanace",
+        "policies/deployment-control",
+        "policies/release-management",
+        "policies/release-channels",
+        "policies/rollout"
       ]
     }
   ],

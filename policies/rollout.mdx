@@ -1,0 +1,31 @@
+---
+title: Rollout & Timing
+description: |
+  Controls how and when deployments are rolled out to environments, including
+  incremental rollouts, scheduling deployments during specific windows, and
+  managing release timing to minimize risk and ensure stability during the
+  deployment process.
+---
+
+## Release Windows
+
+Release windows allow you to control when deployments can be released into an
+environment.
+
+## Gradual Rollout
+
+Enabling gradual rollouts will spread deployments evenly out over a given
+duration. A default duration of 0ms means that deployments will be rolled out
+immediately.
+
+Example values: `10m`, `1h`, `1d`, `1w`
+
+## Deployment Cooldown
+
+Ceployment cooldown is crucial as it ensures a buffer period between releases.
+This helps in mitigating risks by allowing time to monitor the impact of the
+previous release and address any issues before proceeding with the next one. It
+also prevents overwhelming the system with rapid consecutive deployments,
+maintaining stability and performance.
+
+- Example values: `5m`, `2h`, `1d`

@@ -1,0 +1,18 @@
+---
+title: Release Management
+description: |
+  Manages new and pending releases in the deployment pipeline, defining 
+  rules to cancel or await pending releases for controlled, 
+  conflict-free execution.
+---
+
+## Release Sequencing
+
+Specify whether pending releases should be cancelled or awaited when a new
+release is triggered.
+
+- **Cancel**: Stop pending releases.
+- **Await**: Wait for pending releases to complete.
+
+This policy ensures orderly release execution, preventing conflicts and ensuring
+consistency across environments.
