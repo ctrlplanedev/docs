@@ -1,33 +1,28 @@
 ---
-title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+title: "Introduction"
+description: |
+  Ctrlplane API reference
 ---
 
-<Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
-</Note>
+OpenAPI (formerly known as Swagger) is a standardized specification for
+describing REST APIs. It provides a way to document API's endpoints,
+request/response formats, authentication methods, and other details in a
+machine-readable format.
 
-## Welcome
+The OpenAPI specification makes it easier to:
 
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
+- Auto-generate API client libraries
+- Enable API discovery and exploration
 
-<Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
->
-  View the OpenAPI specification file
-</Card>
+Our OpenAPI specification contains detailed information about all available
+Ctrlplane API endpoints, including:
 
-## Authentication
+- Available HTTP methods (GET, POST, PUT, DELETE etc.)
+- Request parameters and body schemas
+- Response formats and status codes
+- Authentication requirements
+- Examples and descriptions
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
-
-```json
-"security": [
-  {
-    "bearerAuth": []
-  }
-]
-```
+View the
+[OpenAPI](https://github.com/ctrlplanedev/ctrlplane/blob/main/openapi.v1.json)
+spec.

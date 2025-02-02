@@ -5,7 +5,7 @@
     "dark": "/logo/dark.svg",
     "light": "/logo/light.svg"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "/favicon.png",
   "background": {
     "style": "grid"
   },
@@ -80,30 +80,61 @@
       "pages": ["api-reference/introduction"]
     },
     {
-      "group": "Endpoint Examples",
-      "pages": ["api-reference/endpoint/resources/create"]
+      "group": "API Reference",
+      "pages": [
+        {
+          "group": "Environments",
+          "pages": [
+            "api-reference/endpoints/create-an-environment",
+            "api-reference/endpoints/get-an-environment",
+            "api-reference/endpoints/delete-an-environment-by-name",
+            "api-reference/endpoints/delete-an-environment"
+          ]
+        },
+        {
+          "group": "Releases",
+          "pages": [
+            "api-reference/endpoints/upserts-a-release",
+            "api-reference/endpoints/create-a-release-channel"
+          ]
+        },
+        {
+          "group": "Resources",
+          "pages": [
+            "api-reference/endpoints/create-or-update-multiple-resources",
+            "api-reference/endpoints/get-a-resource-by-identifier",
+            "api-reference/endpoints/delete-a-resource",
+            "api-reference/endpoints/resource-relationships/create-a-relationship-between-two-resources",
+            "api-reference/endpoints/sets-the-resource-for-a-provider"
+          ]
+        },
+        {
+          "group": "Systems",
+          "pages": [
+            "api-reference/endpoints/create-a-system",
+            "api-reference/endpoints/delete-a-system"
+          ]
+        },
+        {
+          "group": "Jobs",
+          "pages": ["api-reference/endpoints/get-a-job"]
+        }
+      ]
     },
     {
       "group": "Cloud Providers",
       "pages": [
         "integrations/cloud-providers/overview",
-        "integrations/cloud-providers/aws",
-        "integrations/cloud-providers/azure",
-        "integrations/cloud-providers/google",
-        "integrations/cloud-providers/digital-ocean"
+        "integrations/cloud-providers/google"
       ]
     },
     {
       "group": "Container Orchestration",
-      "pages": [
-        "integrations/containers/kubernetes",
-        "integrations/containers/helm"
-      ]
+      "pages": ["integrations/containers/kubernetes"]
     },
     {
       "group": "SaaS Integrations",
       "pages": [
-        "integrations/saas/docker-hub",
         "integrations/saas/github",
         "integrations/saas/tailscale",
         "integrations/saas/terraform-cloud"
@@ -144,7 +175,14 @@
     {
       "group": "Configuration",
       "pages": [
-        "self-hosted/config/auth",
+        {
+          "group": "Authentication",
+          "pages": [
+            "self-hosted/config/auth/basic",
+            "self-hosted/config/auth/google",
+            "self-hosted/config/auth/oidc"
+          ]
+        },
         {
           "group": "Integrations",
           "pages": ["self-hosted/config/integrations/github-bot"]

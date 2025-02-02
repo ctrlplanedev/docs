@@ -1,0 +1,29 @@
+---
+title: OIDC
+description: Authenticate with an OIDC provider
+---
+
+You can configure OIDC authentication using environment variables. This allows
+you to integrate with identity providers like Google, GitHub, or any other
+OIDC-compliant provider.
+
+### Environment Variables
+
+Configure the following environment variables to set up OIDC authentication:
+
+<ResponseField name="OIDC_ISSUER_URL" type="string" required>
+  The URL of your OIDC provider's issuer (e.g. `https://accounts.google.com`)
+</ResponseField>
+
+<ResponseField name="OIDC_CLIENT_ID" type="string" required>
+  The client ID obtained from your OIDC provider
+</ResponseField>
+
+<ResponseField name="OIDC_CLIENT_SECRET" type="string" required>
+  The client secret obtained from your OIDC provider
+</ResponseField>
+
+<ResponseField name="OIDC_CALLBACK_URL" type="string" required>
+  The callback URL for your application (e.g.
+  `https://your-domain.com/auth/callback`)
+</ResponseField>

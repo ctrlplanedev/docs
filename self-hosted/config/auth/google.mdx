@@ -1,0 +1,46 @@
+---
+title: "Google Authentication"
+description: "Set up Google authentication for your Ctrlplane application"
+---
+
+This guide will help you set up Google authentication for your Ctrlplane
+application.
+
+## Prerequisites
+
+- A Google Cloud Platform (GCP) account
+- A GCP project with the Google+ API enabled
+
+## Setup Steps
+
+1. Go to the Google Cloud Console.
+2. Select your project or create a new one.
+3. Navigate to "APIs & Services" > "Credentials".
+4. Click "Create Credentials" and select "OAuth client ID".
+5. Choose "Web application" as the application type.
+6. Set the authorized redirect URI to
+   `https://your-domain.com/api/auth/callback/google`.
+7. Click "Create" to generate your client ID and client secret.
+
+## Configuration
+
+To enable Google authentication, you need to set the following environment
+variables:
+
+<ResponseField name="AUTH_GOOGLE_CLIENT_ID" type="string" required>
+  Your Google OAuth client ID obtained from the Google Cloud Console
+</ResponseField>
+
+<ResponseField name="AUTH_GOOGLE_CLIENT_SECRET" type="string" required>
+  Your Google OAuth client secret obtained from the Google Cloud Console
+</ResponseField>
+
+When these variables are set, Google authentication will be automatically
+enabled, and basic authentication will be disabled unless explicitly enabled.
+
+## Usage
+
+Once configured, users will be able to sign in to your Ctrlplane application
+using their Google accounts. The authentication flow will redirect users to
+Google's login page and then back to your Ctrlplane instance after successful
+authentication.
