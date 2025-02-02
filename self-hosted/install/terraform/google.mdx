@@ -1,3 +1,44 @@
 ---
 title: Google
+description: Terraform module for installing Ctrlplane on Google Kubernetes Engine.
 ---
+
+<Warning>
+  We recommend using the cloud-native version of
+  [Ctrlplane](https://app.ctrlplane.dev) when possible. Current selfhosted
+  installation is not stable.
+</Warning>
+
+<Icon icon="github" /> [Terraform Module Repository](https://github.com/ctrlplanedev/terraform-google-ctrlplane)
+
+This module creates a resilient and fault-tolerant Ctrlplane installation using
+Google Kubernetes Engine (GKE) as the computing environment and the following
+services for storing data:
+
+- CloudSQL for PostgreSQL
+- Memorystore for Redis
+- Cloud Storage
+
+## Compatibility
+
+This module is meant for use with Terraform **1.0+** and tested using Terraform **1.5**.
+
+## Usage
+
+There are examples included in the examples folder but simple usage is as
+follows:
+
+```hcl
+module "ctrlplane" {
+  source    = "ctrlplanedev/ctrlplane/google"
+  namespace = "ctrlplane"
+  domains   = ["<fqdn>"]
+}
+```
+
+Then perform the following commands on the root folder:
+
+- `terraform init` to get the plugins
+- `terraform plan` to see the infrastructure plan
+- `terraform apply` to apply the infrastructure build
+- `terraform destroy` to destroy the built infrastructure
