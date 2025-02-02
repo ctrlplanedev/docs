@@ -78,7 +78,7 @@
   "navigation": [
     {
       "group": "Get Started",
-      "pages": ["overview", "introduction", "quickstart", "first-deployment"]
+      "pages": ["overview", "introduction", "first-deployment"]
     },
     {
       "group": "API Documentation",
@@ -159,7 +159,6 @@
     {
       "group": "Policies",
       "pages": [
-        "policies/overview",
         "policies/resource-filtering",
         "policies/governanace",
         "policies/deployment-control",

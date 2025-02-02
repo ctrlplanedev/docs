@@ -1,72 +1,71 @@
 ---
-title: Introduction
-description: "Welcome to the home of your new documentation"
+title: "Intro to Ctrlplane"
+description: |
+  Ctrlplane is an open-source deployment orchestration tool that helps you scale
+  your infrastructure.
 ---
 
-<img
-  className="block dark:hidden"
-  src="/images/hero-light.svg"
-  alt="Hero Light"
-/>
-<img
-  className="hidden dark:block"
-  src="/images/hero-dark.svg"
-  alt="Hero Dark"
-/>
+## What you can do with Ctrlplane
 
-## Setting up
+Ctrlplane is designed to streamline and automate complex deployment processes across diverse infrastructures, helping teams scale their operations efficiently and securely.
 
-The first step to world-class documentation is setting up your editing
-environments.
+Here's an overview of Ctrlplane's key capabilities and common use cases.
+
+| Capability               | Enables you to...                                                                                                                                       |
+| :----------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Deployment Orchestration | Coordinate complex multi-environment deployments, enforce governance policies, and automate sophisticated rollout strategies across your infrastructure |
+| Environment Management   | Create standardized environments with consistent configurations, manage environment-specific variables, and maintain deployment targets at scale        |
+| Integration & Tools      | Connect seamlessly with existing CI/CD pipelines, major cloud providers (AWS, Azure, GCP), and container platforms like Kubernetes and Docker           |
+| Release Management       | Track deployment status in real-time, implement version control policies, manage rollouts and rollbacks, and maintain deployment history                |
+| Policy Controls          | Define and enforce deployment rules, implement role-based access control, maintain audit logs, and ensure compliance across teams                       |
+| Automation               | Streamline repetitive deployment tasks, manage service dependencies, and scale deployments efficiently across multiple targets                          |
+
+### Common Use Cases
+
+- **Multi-Environment Deployments**: Coordinate releases across development,
+  staging, and production environments with sophisticated scheduling and
+  dependency management
+
+- **Cloud & Container Operations**: Deploy and manage applications across
+  multiple cloud providers and container orchestration platforms from a single
+  control plane
+
+- **Enterprise Governance**: Implement comprehensive access controls, maintain
+  audit trails, and enforce organizational deployment policies
+
+- **Infrastructure Scaling**: Automate deployment processes and efficiently
+  manage resources as your infrastructure grows
+
+- **Release Automation**: Streamline the entire release lifecycle from
+  development to production with automated workflows and policy enforcement
+
+## Start building with Ctrlplane
+
+When you're ready, start building with Ctrlplane:
 
 <CardGroup cols={2}>
   <Card
-    title="Edit Your Docs"
-    icon="pen-to-square"
-    href="https://mintlify.com/docs/quickstart"
-  >
-    Get your docs set up locally for easy development
-  </Card>
+    title="First Deployment"
+    icon="ship"
+    href="/first-deployment"
+    description="Follow the quickstart guide to make your first deployment with Ctrlplane"
+  />
   <Card
-    title="Preview Changes"
-    icon="image"
-    href="https://mintlify.com/docs/development"
-  >
-    Preview your changes before you push to make sure they're perfect
-  </Card>
-</CardGroup>
-
-## Make it yours
-
-Update your docs to your brand and add valuable content for the best user conversion.
-
-<CardGroup cols={2}>
-  <Card
-    title="Customize Style"
-    icon="palette"
-    href="https://mintlify.com/docs/settings/global"
-  >
-    Customize your docs to your company's colors and brands
-  </Card>
-  <Card
-    title="Reference APIs"
+    title="API Reference"
     icon="code"
-    href="https://mintlify.com/docs/api-playground/openapi"
-  >
-    Automatically generate endpoints from an OpenAPI spec
-  </Card>
+    href="/api-reference"
+    description="Explore the complete API documentation"
+  />
   <Card
-    title="Add Components"
+    title="Integrations"
     icon="screwdriver-wrench"
-    href="https://mintlify.com/docs/content/components/accordions"
-  >
-    Build interactive features and designs to guide your users
-  </Card>
+    href="/integrations"
+    description="Connect Ctrlplane with your existing tools and platforms"
+  />
   <Card
-    title="Get Inspiration"
-    icon="stars"
-    href="https://mintlify.com/customers"
-  >
-    Check out our showcase of our favorite documentation
-  </Card>
+    title="Concepts"
+    icon="books"
+    href="/concepts/systems"
+    description="Learn about core Ctrlplane concepts and architecture"
+  />
 </CardGroup>

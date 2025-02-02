@@ -1,3 +1,30 @@
 ---
 title: Kubernetes
 ---
+
+To install a cloud-native version of Ctrlplane, use the Ctrlplane Helm chart.
+This chart contains all the required components to get started and can scale to
+large deployments.
+
+## Pre-requisites
+
+- A working Kubernetes cluster
+- `kubectl` and `helm` on the client system that you will use to install our
+  Helm charts
+
+## Installing Ctrlplane
+
+1. Open Terminal or any other command-line app that has access to Kubernetes
+   tools on your local system.
+
+2. Add Helm Repo
+
+   ```bash
+   helm repo add ctrlplane https://charts.ctrlplane.Dev
+   helm repo update
+   ```
+
+3. Install Helm Chart
+   ```bash
+   helm install ctrlplane ctrlplane/ctrlplane
+   ```
