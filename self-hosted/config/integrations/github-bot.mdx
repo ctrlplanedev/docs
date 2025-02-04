@@ -89,6 +89,10 @@ Add the following environment variables to your instance:
   `-----BEGIN RSA PRIVATE KEY-----...`).
 </ResponseField>
 
+<ResponseField name="GITHUB_BOT_WEBHOOK_SECRET" type="string" required>
+  The webhook secret of the Github App
+</ResponseField>
+
 <RequestExample>
 
 ```yaml Helm Chart
@@ -102,6 +106,7 @@ global:
         clientId: 1234567890
         clientSecret: 1234567890
         privateKey: `-----BEGIN RSA PRIVATE KEY-----...`
+        webhookSecret: '....'
 ```
 
 ```yaml Docker Compose
@@ -110,6 +115,7 @@ GITHUB_BOT_PRIVATE_KEY: -----BEGIN RSA PRIVATE KEY-----...
 GITHUB_BOT_APP_ID: 1234567890
 GITHUB_BOT_CLIENT_ID: 1234567890
 GITHUB_BOT_CLIENT_SECRET: 1234567890
+GITHUB_BOT_WEBHOOK_SECRET: "...."
 ```
 
 </RequestExample>
