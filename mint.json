@@ -73,7 +73,18 @@
   "navigation": [
     {
       "group": "Get Started",
-      "pages": ["overview", "introduction", "first-deployment"]
+      "pages": [
+        "overview",
+        "introduction",
+        {
+          "group": "First Deployment",
+          "pages": [
+            "getting-started/first-deployment",
+            "getting-started/approvals",
+            "getting-started/define-and-use-variables"
+          ]
+        }
+      ]
     },
     {
       "group": "API Documentation",

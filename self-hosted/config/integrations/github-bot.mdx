@@ -1,3 +1,115 @@
 ---
-title: GitHub Bot
+title: GitHub Integration
+description: |
+  Connect your GitHub organization to your workspace to enable powerful features 
+  like GitHub Job Agent, Release Scanner, and Deployment Configuration.
 ---
+
+Creating a Github bot allows you to enable several powerful features, including
+
+- Github Actions Dispatcher
+- Release Scanner
+
+## Creating a Github App
+
+<Steps>
+  <Step title="On Github, create a new Github App">
+    To set this up, navigate to [github.com](https://github.com/) and register a new
+    GitHub App.
+
+    - Your GitHub account: https://github.com/settings/apps/new
+    - Your GitHub organization:
+    `https://github.com/organizations/<your-org>/settings/apps/new`
+
+  </Step>
+  <Step title="Configure the Github App">
+    Fill out the form as follows:
+
+    | Field           | Value                                                 |
+    | --------------- | ----------------------------------------------------- |
+    | Github App Name | `ctrlplane-{your-instance-name}`                      |
+    | Homepage URL    | `<your-instance-url>`                                 |
+    | Webhook URL     | `<your-instance-url>/api/github/webhook`              |
+
+    Configure the permissions as follows:
+    - Repository
+        - `Actions: Read and write` Allows the
+        creation of workflow runs associated with your deployments.
+        - `Contents: Read only` Allows
+        Ctrlplane to detect changes to your `*ctrlplane.yaml` configuration files.
+        Read more about [configuration management](../config-files).
+    - Organization
+        - `Members: Read only` Allows you to
+        configure github organizations across your workspaces.
+    - Subscribe to Events
+        - `Push` Subscribe to push events to
+        sync changes to your deployment configurations.
+        - `Workflow run` Subscribe to workflow
+        run events to sync the status of your distpatched workflows. See
+        [Actions Dispatcher](./github/actions-dispatcher) for more information.
+
+  </Step>
+  <Step title="Copy the Client Secret">
+    Copy or note down the client secret, as it will be used to configure the Github
+    App.
+  </Step>
+  <Step title="Generate a new private key">
+    Generate a new private key, and download the file.
+  </Step>
+</Steps>
+
+## Configure the Github information on your instance
+
+Add the following environment variables to your instance:
+
+<ResponseField name="GITHUB_BOT_APP_NAME" type="string" required>
+  The name of the Github App
+</ResponseField>
+
+<ResponseField name="GITHUB_BOT_PRIVATE_KEY" type="string" required>
+  The private key of the Github App
+</ResponseField>
+
+<ResponseField name="GITHUB_BOT_APP_ID" type="string" required>
+  The ID of the Github App, can be found in the "about" section of the Github
+  App.
+</ResponseField>
+
+<ResponseField name="GITHUB_BOT_CLIENT_ID" type="string" required>
+  The client ID of the Github App, can be found in the "about" section of the
+  Github App.
+</ResponseField>
+
+<ResponseField name="GITHUB_BOT_CLIENT_SECRET" type="string" required>
+  The client secret of the Github App
+</ResponseField>
+
+<ResponseField name="GITHUB_BOT_PRIVATE_KEY" type="string" required>
+  The private key of the Github App, can be copied from the downloaded file (e.g
+  `-----BEGIN RSA PRIVATE KEY-----...`).
+</ResponseField>
+
+<RequestExample>
+
+```yaml Helm Chart
+global:
+  integrations:
+    github:
+      url: https://ctrlplane.example.com
+      bot:
+        appName: ctrlplane-bot
+        appId: 1234567890
+        clientId: 1234567890
+        clientSecret: 1234567890
+        privateKey: `-----BEGIN RSA PRIVATE KEY-----...`
+```
+
+```yaml Docker Compose
+GITHUB_BOT_APP_NAME: ctrlplane-my-instance
+GITHUB_BOT_PRIVATE_KEY: -----BEGIN RSA PRIVATE KEY-----...
+GITHUB_BOT_APP_ID: 1234567890
+GITHUB_BOT_CLIENT_ID: 1234567890
+GITHUB_BOT_CLIENT_SECRET: 1234567890
+```
+
+</RequestExample>

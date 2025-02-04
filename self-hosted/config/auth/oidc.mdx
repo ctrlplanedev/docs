@@ -27,3 +27,14 @@ Configure the following environment variables to set up OIDC authentication:
   The callback URL for your application (e.g.
   `https://your-domain.com/auth/callback`)
 </ResponseField>
+
+<RequestExample>
+
+```yaml Docker Compose
+AUTH_OIDC_ISSUER_URL: https://accounts.google.com
+AUTH_OIDC_CLIENT_ID: "1234567890"
+AUTH_OIDC_CLIENT_SECRET: "1234567890"
+AUTH_OIDC_CALLBACK_URL: https://ctrlplane.example.com/auth/callback
+```
+
+</RequestExample>
