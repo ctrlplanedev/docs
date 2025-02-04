@@ -152,12 +152,12 @@
       ]
     },
     {
-      "group": "DevEx",
-      "pages": ["examples/devex/ephemeral-environments"]
+      "group": "Simple",
+      "pages": ["examples/simple/otel-deployment"]
     },
     {
-      "group": "Tooling",
-      "pages": ["examples/tooling/otel-deployment"]
+      "group": "Advanced",
+      "pages": ["examples/advanced/ephemeral-environments"]
     },
     {
       "group": "Concepts",
