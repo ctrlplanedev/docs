@@ -47,6 +47,14 @@ authentication.
 
 <RequestExample>
 
+```yaml Helm Chart
+global:
+  authProviders:
+    google:
+      clientId: ""
+      clientSecret: ""
+```
+
 ```yaml Docker Compose
 AUTH_GOOGLE_CLIENT_ID: "1234567890"
 AUTH_GOOGLE_CLIENT_SECRET: "1234567890"

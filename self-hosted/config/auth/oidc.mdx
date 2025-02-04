@@ -30,6 +30,15 @@ Configure the following environment variables to set up OIDC authentication:
 
 <RequestExample>
 
+```yaml Helm Chart
+global:
+  authProviders:
+    oidc:
+      issuer: ""
+      clientId: ""
+      clientSecret: ""
+```
+
 ```yaml Docker Compose
 AUTH_OIDC_ISSUER_URL: https://accounts.google.com
 AUTH_OIDC_CLIENT_ID: "1234567890"
