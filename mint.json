@@ -136,7 +136,8 @@
       "group": "Cloud Providers",
       "pages": [
         "integrations/cloud-providers/overview",
-        "integrations/cloud-providers/google"
+        "integrations/cloud-providers/google",
+        "integrations/cloud-providers/azure"
       ]
     },
     {
@@ -203,7 +204,8 @@
           "group": "Integrations",
           "pages": [
             "self-hosted/config/integrations/github-bot",
-            "self-hosted/config/integrations/google"
+            "self-hosted/config/integrations/google",
+            "self-hosted/config/integrations/azure"
           ]
         }
       ]

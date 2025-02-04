@@ -1,0 +1,81 @@
+---
+title: "Azure"
+description: "Learn how to configure Azure integration for your Ctrlplane instance."
+---
+
+## Overview
+
+Ctrlplane provides built-in integration with Azure through Entra app registrations. This allows workspaces to automatically
+access and manage Azure resources.
+
+## How It Works
+
+To enable the integration, you'll need to create an Entra app registration for your Ctrlplane instance.
+
+Once created, you can configure a subscription-specific resource provider for each Azure subscription you want to sync.
+  
+## Configuration
+
+### Creating an Entra app registration
+
+To create an Entra app registration, you'll need to follow these steps:
+
+1. Navigate to the Azure portal and select your Azure Active Directory.
+2. In the left-hand menu, select `Microsoft Entra ID`.
+3. Under the `Manage` dropdown, select `App registrations`.
+4. Click `New registration`.
+5. Fill in the required fields:
+    - Name: Give your app a name, for example, "Ctrlplane".
+    - Redirect URI: Set this to `https://<ctrlplane-instance-url>/api/azure/consent` with the platform as `Web`.
+    - Supported account types: Select the scope of accounts that can use this app, for example, `Accounts in this organizational directory only` (this is the default and recommended setting).
+
+<Frame>
+  <img src="/images/azure-self-hosted/create-app-registration.png" />
+</Frame>
+
+6. Click `Register`.
+
+<Note>
+  You'll need to save the `Application (client) ID` as you'll need it to enable the integration on your instance.
+</Note>
+
+### Generate a client secret
+
+Once the app registration is created, you'll need to generate a client secret.
+
+1. Navigate to the app registration you just created.
+2. In the left-hand menu, select `Certificates & secrets`.
+3. Click `New client secret`.
+4. Fill in the required fields:
+    - Description: Give your secret a description, for example, "Ctrlplane client secret".
+    - Expires: Select the expiration date for your secret, for example, `1 year`.
+5. Click `Add`.
+
+<Note>
+  You'll need to save the `Client secret` as you'll need it to enable the integration on your instance.
+</Note>
+
+<Note>
+  Once the client secret is expired, you'll need to generate a new one and update the integration on your instance.
+</Note>
+
+<RequestExample>
+
+```yaml Helm Chart
+global:
+  integrations:
+    azure:
+      appClientId: <app-client-id>
+      appClientSecret: <app-client-secret>
+```
+
+```hcl Terraform Module
+module "ctrlplane" {
+  azure_app = {
+    client_id     = var.azure_app_client_id
+    client_secret = var.azure_app_client_secret
+  }
+}
+```
+
+</RequestExample>
