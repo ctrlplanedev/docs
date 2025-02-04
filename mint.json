@@ -186,6 +186,7 @@
     {
       "group": "Configuration",
       "pages": [
+        "self-hosted/config/postgresql",
         {
           "group": "Authentication",
           "pages": [

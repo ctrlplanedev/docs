@@ -1,0 +1,38 @@
+---
+title: "PostgreSQL"
+description: "Configure PostgreSQL database connection settings for your Ctrlplane instance"
+---
+
+Ctrlplane uses PostgreSQL as its primary database. You'll need to configure the
+database connection settings through environment variables.
+
+## Compatibility
+
+Ctrlplane is compatible with the following PostgreSQL versions:
+
+| Ctrlplane Version | PostgreSQL Version |
+| :---------------- | :----------------- |
+| main              | 16.x - 18.x        |
+
+## Configuration
+
+Configure the following environment variables to set up your PostgreSQL
+connection:
+
+<RequestExample>
+
+```yaml Helm Chart
+global:
+  postgresql:
+    user: "ctrlplane"
+    password: "ctrlplane"
+    host: ""
+    port: "5432"
+    database: "ctrlplane"
+```
+
+```yaml Docker Compose
+DATABASE_URL: "postgresql://ctrlplane:ctrlplane@localhost:5432/ctrlplane"
+```
+
+</RequestExample>

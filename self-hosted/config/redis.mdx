@@ -1,0 +1,40 @@
+---
+title: "Redis"
+description: "Configure Redis connection settings for your Ctrlplane instance"
+---
+
+Ctrlplane uses Redis for caching and session management. You'll need to
+configure the Redis connection settings through environment variables.
+
+<Warning>
+  Make sure your Redis instance is configured with persistence enabled (AOF or
+  RDB) to prevent data loss during restarts.
+</Warning>
+
+## Compatibility
+
+Ctrlplane is compatible with the following Redis versions:
+
+| Ctrlplane Version | Redis Version |
+| :---------------- | :------------ |
+| main              | 6.x - 7.x     |
+
+## Configuration
+
+Configure the following environment variables to set up your Redis connection:
+
+<RequestExample>
+
+```yaml Helm Chart
+global:
+  redis:
+    host: ""
+    port: "6379"
+    password: ""
+```
+
+```yaml Docker Compose
+REDIS_URL: "redis://localhost:6379"
+```
+
+</RequestExample>
