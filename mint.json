@@ -152,6 +152,10 @@
       ]
     },
     {
+      "group": "Miscellaneous",
+      "pages": ["integrations/miscellaneous/script-executor"]
+    },
+    {
       "group": "Simple",
       "pages": ["examples/simple/otel-deployment"]
     },
