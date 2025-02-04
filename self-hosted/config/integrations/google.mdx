@@ -1,4 +1,68 @@
 ---
-title: "Google Integration"
+title: "Google"
 description: "Learn how to configure Google integration for your Ctrlplane instance."
 ---
+
+## Overview
+
+Ctrlplane provides built-in integration with Google Cloud Platform (GCP) through
+managed service accounts. This allows workspaces to automatically access and
+manage GCP resources without users having to deploy their own job agents.
+
+<Note>
+  If you're using the Terraform Module, this will automatically be configured.
+</Note>
+
+## How It Works
+
+When enabled, Ctrlplane will:
+
+1. Create a service account for each workspace
+2. Manage the lifecycle of these service accounts
+3. Handle authentication and authorization to GCP resources
+
+## Configuration
+
+Ctrlplane uses the standard Google Cloud authentication methods. The application
+will automatically detect and use credentials in the following order:
+
+1. `GOOGLE_APPLICATION_CREDENTIALS` environment variable pointing to a service
+   account key file
+2. Default service account when running in GCP (e.g. GKE, Compute Engine)
+3. Application default credentials from `gcloud auth application-default login`
+4. Workload Identity Federation (for AWS, Azure, etc.)
+
+### Running in GCP
+
+When running in Google Cloud Platform (GKE, etc.), the application
+will automatically use the default service account. No additional configuration
+is needed.
+
+### Running Outside GCP
+
+When running outside of GCP, you have two options:
+
+1. Set `GOOGLE_APPLICATION_CREDENTIALS` environment variable:
+
+To enable the Google managed agent integration, configure the following
+environment variables:
+
+<Warning>
+  The service account used for GOOGLE_CREDENTIALS must have the "Service Account
+  Admin" and "Service Account Key Admin" IAM roles. These are need to create and
+  assume the role of the service accounts created for each workspace.
+</Warning>
+
+<RequestExample>
+
+```yaml Helm Chart
+webservice:
+  extraEnvs:
+    GOOGLE_APPLICATION_CREDENTIALS: /path/to/service-account.json
+```
+
+```yaml Docker
+GOOGLE_APPLICATION_CREDENTIALS: /path/to/service-account.json
+```
+
+</RequestExample>

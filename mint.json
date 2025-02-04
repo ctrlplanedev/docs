@@ -197,7 +197,10 @@
         },
         {
           "group": "Integrations",
-          "pages": ["self-hosted/config/integrations/github-bot"]
+          "pages": [
+            "self-hosted/config/integrations/github-bot",
+            "self-hosted/config/integrations/google"
+          ]
         }
       ]
     },
