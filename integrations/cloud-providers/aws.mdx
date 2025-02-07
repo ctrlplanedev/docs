@@ -3,8 +3,132 @@ title: AWS
 description: "AWS integration"
 ---
 
+## Compute Scanner
+
+The AWS Compute Scanner is a tool that scans AWS accounts for new instances and
+creates resources for them automatically.
+
+Currently, the AWS Compute Scanner supports importing the following resources:
+
+- Amazon Elastic Kubernetes Service Clusters (EKS)
+- Amazon Virtual Private Cloud (VPC)
+
 ## Resource Provider
 
-### Managed Provider
+### Managed AWS Compute Scanner
 
-### Unmanaged Provider
+The managed AWS Compute Scanner is built into the Ctrlplane solution. Each
+workspace will be assigned an AWS IAM role when the managed provider is enabled.
+You must provide this IAM role with the required permissions to access the
+resources in the AWS accounts that you want it to scan.
+
+After the integration is enabled, you can add a new provider, select the Managed
+Provider, and add all the roles in your aws account you would like it to assume and
+it will scan the resources available to those roles. Once you hit submit, you may
+need to wait a few minutes while it scans and imports all compute resources.
+
+#### Role Requirements
+
+The Managed AWS Compute Scanner role can be obtained from the provider settings
+under **AWS Role** or from the workspace settings integration page after being
+enabled.
+
+The role that you want assumed in your account must have the following permissions
+policy:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": ["eks:*", "ec2:*"],
+      "Resource": "*"
+    }
+  ]
+}
+```
+
+The role also requires a trust policy that allows the
+`arn:aws:iam::<account-id>:role/ctrlplane-<workspace>` role to assume it:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::<account-id>:role/ctrlplane-<workspace>"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+```
+
+### Self-Hosted Ctrlplane
+
+When self-hosting Ctrlplane (rather than using the managed cloud service), you'll
+need to configure AWS credentials in two places:
+
+1. **Administrative Credentials**: First, you'll need to set up administrative AWS
+   credentials for Ctrlplane itself. These credentials allow Ctrlplane to create
+   and manage IAM roles for each workspace.
+
+2. **Workspace Roles**: Second, similar to the managed provider, you'll need to
+   set up roles in your AWS accounts that can be assumed by the administrative
+   credentials to scan resources.
+
+#### Administrative Credentials Setup
+
+The self-hosted Ctrlplane instance needs administrative AWS credentials to manage
+workspace IAM roles. You can provide these credentials through any of these
+methods:
+
+- IAM User credentials
+- IAM Role
+- Workload identity federation
+- EKS node role (if deploying in EKS)
+
+These administrative credentials require the following permissions:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "iam:CreateRole",
+        "iam:PutRolePolicy",
+        "iam:DeleteRole",
+        "iam:DeleteRolePolicy",
+        "sts:AssumeRole"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+```
+
+To configure these credentials, you can use:
+
+```bash
+# Environment variables (for IAM user setup)
+AWS_ACCESS_KEY_ID=<your-admin-access-key-id>
+AWS_SECRET_ACCESS_KEY=<your-admin-secret-access-key>
+AWS_REGION=<your-aws-region>
+```
+
+Or use alternative authentication methods like:
+
+- AWS credentials file
+- EKS node role
+- AWS IAM role with workload identity federation
+- Cross-cloud authentication (supports AWS authentication via GCP/Azure workload identity federation)
+  - Please refer to the cloud specific documentation for more information on how to set up cross-cloud authentication.
+
+Once configured, Ctrlplane will automatically create workspace-specific roles,
+similar to the managed service. See [Role Requirements](#role-requirements) above
+for setting up the necessary permissions in accounts you want to scan.
