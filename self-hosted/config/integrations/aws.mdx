@@ -1,0 +1,117 @@
+---
+title: "AWS"
+description: "Learn how to configure AWS integration for your Ctrlplane instance."
+---
+
+## Overview
+
+Ctrlplane provides built-in integration with Amazon Web Services (AWS) through
+managed IAM roles. This allows workspaces to automatically access and
+manage AWS resources without users having to deploy their own job agents.
+
+## How It Works
+
+When enabled, Ctrlplane will:
+
+1. Create IAM roles for each workspace
+2. Manage the lifecycle of these IAM roles
+3. Handle authentication and authorization to scan AWS resources
+
+## Configuration
+
+Ctrlplane uses standard AWS authentication methods. The application
+will automatically detect and use credentials in the following order:
+
+1. Environment variables (`AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`)
+2. AWS credentials file (`~/.aws/credentials`)
+3. IAM role when running in AWS (e.g. EKS, EC2)
+4. Web Identity Federation (for cross-cloud authentication)
+
+### Running in AWS
+
+When running in Amazon Web Services (EKS, EC2, etc.), the application
+will automatically use the instance IAM role. No additional configuration
+is needed.
+
+### Running Outside AWS
+
+When running outside of AWS, you'll need to configure administrative AWS
+credentials that allow Ctrlplane to manage workspace IAM roles in a landing
+AWS account. These credentials require specific permissions to create and
+manage IAM roles.
+
+<Warning>
+  The IAM role or user credentials must have the following permissions: 
+  - `iam:CreateRole` 
+  - `iam:PutRolePolicy` 
+  - `iam:DeleteRole` 
+  - `iam:DeleteRolePolicy` 
+  - `sts:AssumeRole`
+</Warning>
+
+You have several options for providing these credentials to the application:
+
+1. Environment variables:
+
+<RequestExample>
+
+```yaml Helm Chart
+global:
+  extraEnvs:
+    AWS_ACCESS_KEY_ID: your-access-key
+    AWS_SECRET_ACCESS_KEY: your-secret-key
+    AWS_REGION: your-region
+
+```
+
+```yaml Docker Compose
+environment:
+  AWS_ACCESS_KEY_ID: your-access-key
+  AWS_SECRET_ACCESS_KEY: your-secret-key
+  AWS_REGION: your-region
+```
+
+</RequestExample>
+
+2. AWS credentials file:
+
+Create or update `~/.aws/credentials`:
+
+```ini
+[default]
+aws_access_key_id = your-access-key
+aws_secret_access_key = your-secret-key
+region = your-region
+```
+
+3. Alternative authentication methods:
+   - EKS node role (when running in EKS)
+   - AWS IAM role with workload identity federation
+   - Cross-cloud authentication (supports AWS authentication via GCP/Azure workload identity federation)
+
+Here's the required IAM policy for the administrative role:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "iam:CreateRole",
+        "iam:PutRolePolicy",
+        "iam:DeleteRole",
+        "iam:DeleteRolePolicy",
+        "sts:AssumeRole"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+```
+
+For more information about IAM policies, see the [AWS documentation](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_actions-list.html).
+
+If you have the administrative credentials configured and are ready to
+configure the AWS integration to scan resources in your accounts, see the
+[AWS integration guide](/integrations/cloud-providers/aws).
