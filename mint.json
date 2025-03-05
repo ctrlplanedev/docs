@@ -142,10 +142,6 @@
       ]
     },
     {
-      "group": "Container Orchestration",
-      "pages": ["integrations/containers/kubernetes"]
-    },
-    {
       "group": "SaaS Integrations",
       "pages": [
         "integrations/saas/github",

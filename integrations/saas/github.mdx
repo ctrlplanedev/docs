@@ -3,19 +3,42 @@ title: GitHub
 description: "GitHub integration"
 ---
 
-## Git Release Provider
+## Git Commit Release Provider
 
-Its commone to sync every release from a GitHub to a deployment. Here is an
-example github aciton that creates a release for a given deployment.
+Its commone to create a release for every commit to a repository. Here is an
+example github aciton that creates a release for a given commit.
 
 ```yaml
+name: Create Release
+
 on:
-  release:
-    types: [published]
+  push:
 
 jobs:
-  deploy:
-    uses: ctrlplane/github-action@v1
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Ctrlplane CLI
+        uses: ctrlplanedev/cli@main
+        with:
+          api_key: ${{ secrets.CTRLPLANE_API_KEY }}
+          version: v0.1.8
+
+      - name: Create Release
+        run: |
+          ctrlc api upsert release \
+            --version ${{ github.sha }} \
+            --name ${{ github.sha }} \
+            --deployment 00000000-0000-0000-0000-000000000000 \
+            --metadata branch=${{ github.ref }} \
+            --metadata commit=${{ github.sha }} \
+            --metadata message=${{ github.event.head_commit.message }} \
+            --metadata author=${{ github.event.head_commit.author.name }} \
+            --metadata email=${{ github.event.head_commit.author.email }} \
+            --metadata timestamp=${{ github.event.head_commit.timestamp }}
 ```
 
 ## GitHub Actions Dispatcher
