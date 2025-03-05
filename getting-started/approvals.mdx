@@ -7,30 +7,24 @@ description: |
 
 ## Overview
 
-The Manual Intervention Required step allows you to incorporate human approvals and
-manual verification into your deployment workflows. When a manual intervention
-point is reached, the deployment process pauses and waits for an explicit approval
-or rejection from authorized team members.
-
-## Key Benefits
+The Manual Approval Required step allows you to incorporate human approvals
+and manual verification into your deployment workflows. When a manual
+intervention point is reached, the deployment process pauses and waits for an
+explicit approval or rejection from authorized team members.
 
 - **Quality Control**: Add verification steps before critical deployments
 - **Compliance**: Ensure proper sign-off for regulated environments
 - **Risk Management**: Prevent unauthorized or unreviewed changes
 - **Team Collaboration**: Involve relevant stakeholders in the deployment process
 
-## Setting Up Manual Interventions
+## Guide
 
-Manual interventions can be configured through:
+Assumes you have a deployment pipeline already created. If not, you can create
+one by following the [Getting Started](/getting-started/first-deployment) guide.
 
-1. The Ctrlplane dashboard
-2. API endpoints
-3. Configuration files
+1. Go to the systems view and click on your environment in the table header.
+2. Click `Approval & Governance` in the left sidebar.
+3. Toggle `Is approval required` to `Yes`.
 
-### Via Dashboard
-
-<Steps>
-  1. Navigate to your deployment pipeline 2. Add a "Manual Intervention" step 3.
-  Configure the approval requirements: - Required approvers - Timeout settings -
-  Notification preferences
-</Steps>
+Now, when you create a new release, it will pause at the Manual Approval
+Required step and wait for you to approve the deployment.
