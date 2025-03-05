@@ -3,7 +3,88 @@ title: GitHub
 description: "GitHub integration"
 ---
 
-## Git Commit Release Provider
+## GitHub Workflow Dispatcher
+
+GitHub Workflow Dispatcher allows you to trigger Github workflows to deploy
+software or infrastructure.
+
+<Steps>
+
+  <Step title="Enable GitHub Integration"> 
+  
+    Enable the GitHub integration in your
+    Ctrlplane workspace settings and invite the Github bot to your organization.
+
+    <Frame caption="Workspace Settings > Integrations > GitHub">
+      <img src="/integrations/saas/images/github/enable-github-integration.png" />
+    </Frame>
+
+  </Step>
+
+  <Step title="Creating a GitHub Workflow">
+
+    Create a new workflow in your repository.
+
+    ```yaml
+    name: Receiving Workflow
+    run-name:
+      Receiving Workflow [${{ inputs.job_id }}]
+
+    on:
+      workflow_dispatch:
+        inputs:
+          job_id:
+            description: "Distinct ID"
+            required: false
+    ```
+
+    <Info>
+    Due to [limitations of the GitHub API](https://github.com/orgs/community/discussions/9752), workflows do not return the run ID. In order for Ctrlplane to get the ID, it generates a random one that is passed into the pipeline and is expected to be added to the Run name. This can be done by adding:
+    </Info>
+
+  </Step>
+
+  <Step title="Retrieving Job Inputs">
+
+    Next, configure the action to retrieve job inputs from Ctrlplane using the
+    `get-job-inputs` action. You will need to provide the base URL of your Ctrl
+    Plane instance, the `job_id` (input), and an API key stored in your GitHub
+    secrets.
+
+    ```yaml
+    jobs:
+      deploy-app:
+        runs-on: ubuntu-latest
+
+        steps:
+          - name: Checkout repository
+            uses: actions/checkout@v4
+
+          - id: ctrlplane
+            uses: ctrlplanedev/ctrlplane/github/get-job-inputs@main
+            with:
+              base_url: https://ctrlplane.dev
+              job_id: ${{ inputs.job_id }}
+              api_key: ${{ secrets.CTRLPLANE_API_KEY }}
+              required_outputs: |
+                release_version
+                resource_config_name
+
+          # ... deploy your app to the resource
+    ```
+
+  </Step>
+</Steps>
+
+### Key Steps to Integrate:
+
+1. Use `workflow_dispatch` to allow manual triggering.
+2. Pass the necessary `job_id` input when dispatching.
+3. Ensure the `get-job-inputs` action is correctly configured with the
+   `base_url`, `job_id`, and `CTRLPLANE_API_KEY` as shown above.
+4. Specify the required outputs that will be used in your workflow.
+
+## Commit Release Provider
 
 Its commone to create a release for every commit to a repository. Here is an
 example github aciton that creates a release for a given commit.
@@ -39,35 +120,4 @@ jobs:
             --metadata author=${{ github.event.head_commit.author.name }} \
             --metadata email=${{ github.event.head_commit.author.email }} \
             --metadata timestamp=${{ github.event.head_commit.timestamp }}
-```
-
-## GitHub Actions Dispatcher
-
-GitHub Actions Dispatcher allows you to trigger other GitHub Actions workflows
-from a single workflow. This is useful when you want to run multiple workflows
-in parallel or trigger a workflow from another repository.
-
-### Usage
-
-To use the GitHub Actions Dispatcher, you'll need:
-
-1. A GitHub Personal Access Token (PAT) with `repo` scope
-2. The repository name and owner where your workflows are defined
-
-To see all available options, run:
-
-### Example
-
-Here is an example of how to use the GitHub Actions Dispatcher to trigger a workspace:
-
-```yaml
-name: Receiving Workflow
-run-name: Receiving Workflow [${{ inputs.job_id }}]
-
-on:
-  workflow_dispatch:
-    inputs:
-      job_id:
-        description: "Job ID"
-        required: true
 ```
