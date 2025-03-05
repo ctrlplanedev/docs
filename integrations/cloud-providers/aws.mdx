@@ -3,7 +3,9 @@ title: AWS
 description: "AWS integration"
 ---
 
-## Compute Scanner
+## Resource Scanner
+
+### Compute Scanner
 
 The AWS Compute Scanner is a tool that scans AWS accounts for new instances and
 creates resources for them automatically.
@@ -12,10 +14,6 @@ Currently, the AWS Compute Scanner supports importing the following resources:
 
 - Amazon Elastic Kubernetes Service Clusters (EKS)
 - Amazon Virtual Private Cloud (VPC)
-
-## Resource Provider
-
-### Managed AWS Compute Scanner
 
 The managed AWS Compute Scanner is built into the Ctrlplane solution. Each
 workspace will be assigned an AWS IAM role when the managed provider is enabled
@@ -68,8 +66,3 @@ The role also requires a trust policy that allows the
   ]
 }
 ```
-
-### Self-Hosted Ctrlplane
-
-For more information on how to configure the integration for a self-hosted
-Ctrlplane instance, see the [AWS self-hosted documentation](/self-hosted/config/integrations/aws).
