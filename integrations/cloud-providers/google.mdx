@@ -1,12 +1,74 @@
 ---
 title: Google
-description: "Google integration"
+description: "Google Cloud Platform integration"
 ---
 
 ## Resource Provider
 
-### App Compute Scanner
+### Project Scanner
 
-### CLI Compute Scanner
+Ctrlplane's Project Scanner provides native integration with Google Cloud
+Platform resources. This allows you to automatically discover and monitor
+resources across your GCP projects without additional configuration.
 
-## Schemas
+Supported resources:
+
+- Google Kubernetes Engine Clusters
+- Google Kubernetes Engine Namespaces
+- vClusters Running on Google Kubernetes Engine
+- Google Compute VMs
+- Google Compute VPCs
+
+The scanner authenticates using Google Service Accounts to securely access your
+projects. Follow these steps to get started:
+
+<Steps>
+  <Step title="Enable GCP Integration">
+    Enable the Google Cloud Platform integration in your Ctrlplane workspace settings.
+
+   <Frame caption="Workspace Settings > Integrations > Google Cloud">
+     <img src="/integrations/cloud-providers/images/google/enable-google-integration.png" />
+   </Frame>
+  </Step>
+
+  <Step title="Configure Service Account Access">
+    Add the service account to your GCP projects with the following IAM roles:
+
+    - `roles/container.clusterViewer` - Required for GKE cluster scanning
+    - `roles/compute.networkViewer` - Required for VPC network scanning
+    - For GKE namespace scanning, create the following Kubernetes RBAC configuration:
+
+        <Accordion title="Kubernetes RBAC Configuration">
+        ```yaml
+        apiVersion: rbac.authorization.k8s.io/v1
+        kind: ClusterRole
+        metadata:
+          name: list-namespaces-role
+        rules:
+        - apiGroups: [""]
+          resources: ["namespaces"]
+          verbs: ["get", "list", "watch"]
+        ---
+        apiVersion: rbac.authorization.k8s.io/v1
+        kind: ClusterRoleBinding
+        metadata:
+          name: list-namespaces-binding
+        roleRef:
+          apiGroup: rbac.authorization.k8s.io
+          kind: ClusterRole
+          name: list-namespaces-role
+        subjects:
+        - kind: User
+          name: [SERVICE_ACCOUNT_EMAIL]
+          apiGroup: rbac.authorization.k8s.io
+        ```
+        </Accordion>
+
+  </Step>
+  <Step title="Set Up Scanner">
+
+    Navigate to `Resources > Providers > Google > Configure` to create a new scanner in your Ctrlplane workspace.
+    The scanner will automatically begin discovering resources across your Google Cloud projects once configured.
+
+  </Step>
+</Steps>
