@@ -1,42 +1,41 @@
 ---
-title: First Deployment
+title: Your First Deployment
 description: |
-  Learn how to make your first deployment with Ctrlplane by following this tutorial.
-  We'll create a simple hello world deployment that can run across multiple servers.
+  Follow this step-by-step guide to create your first Ctrlplane deployment - a simple "hello world" example that demonstrates the core workflow.
 ---
 
-Before starting, ensure you have:
+## Prerequisites
 
-- Access to a Ctrlplane Workspace (cloud-hosted or self-hosted)
-- The Ctrlplane CLI installed
+Before starting, you'll need:
 
-## Create a new System
+- A Ctrlplane Workspace (cloud-hosted or self-hosted)
+- The Ctrlplane CLI installed on your local machine
 
-Systems organize related deployments and environments into logical groups,
-making it easier to manage deployment pipelines and maintain consistency across
-your infrastructure.
+## Step 1: Create a System
 
-To create a new system:
+A System in Ctrlplane organizes related deployments and environments into logical groups. This structure helps maintain consistency and simplifies management.
 
-1. Click the `+` button in the top left corner to open the menu
-2. Select `New System` from the dropdown
-3. Give your system a descriptive name, for example, `Hello world`.
+To create your first system:
+
+1. In the Ctrlplane UI, click the `+` button in the top left corner
+2. Select `New System` from the dropdown menu
+3. Enter a descriptive name (e.g., `Hello World Demo`)
 
 <Frame>
   <img src="/images/first-deployment/new-system-dialog.png" />
 </Frame>
 
-## Create a new Deployment
+## Step 2: Create a Deployment
 
-A deployment represents a complete, end-to-end process for delivering changes to
-your system, organizing principle for managing and orchestrating the release of
-your software or infrastructure across various environments within a system.
+A Deployment in Ctrlplane represents a complete delivery process for your software or infrastructure. It orchestrates how changes move through your environments.
 
-1. Click the `+` button in the top left corner to open the menu
+To create a deployment:
+
+1. Click the `+` button in the top left corner
 2. Select `New Deployment` from the dropdown
-3. For this example, keep the default option selected.
-4. Give your deployment a descriptive name, for example, `My First Deployment`.
-5. Click `Create`.
+3. Keep the default option selected for this example
+4. Enter a name for your deployment (e.g., `Hello World Deployment`)
+5. Click `Create`
 
 <Frame>
   <img src="/images/first-deployment/new-deployment-dialog.png" />

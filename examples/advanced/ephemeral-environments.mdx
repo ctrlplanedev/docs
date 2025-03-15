@@ -1,41 +1,35 @@
 ---
 title: Ephemeral Environments
-description: Ephemeral Environments are a way to create and destroy environments on demand.
+description: Create and destroy isolated testing environments automatically based on pull requests or other triggers to optimize your development workflow.
 ---
 
-## Determining if you need an ephemeral environment
+## Is Ephemeral Environments Right for Your Team?
 
-Here are some key questions to help determine if ephemeral environments would benefit your workflow:
+Consider these key questions to determine if ephemeral environments would benefit your workflow:
 
 <AccordionGroup>
   <Accordion title="Do you need isolated testing environments?">
-    If your team needs to test features in isolation without impacting other developers or staging environments, ephemeral environments allow you to spin up dedicated environments on-demand.
+    Ephemeral environments provide isolated testing spaces for each feature or branch, preventing conflicts between developers and ensuring clean test conditions for every change.
   </Accordion>
 
-<Accordion title="Are your environments complex to set up?">
-  When environments require multiple services, databases, and configurations to
-  be set up, ephemeral environments can automate this process and ensure
-  consistency.
-</Accordion>
+  <Accordion title="Are your environments complex to set up?">
+    When environments require multiple services, databases, and configurations, ephemeral environments automate this complex process, ensuring consistent setups every time and saving hours of manual configuration.
+  </Accordion>
 
-<Accordion title="Do you have high infrastructure costs?">
-  If maintaining multiple long-running environments is costly, ephemeral
-  environments can help reduce costs by only running when needed and
-  automatically cleaning up unused resources.
-</Accordion>
+  <Accordion title="Do you have high infrastructure costs?">
+    By automatically creating environments when needed and destroying them when work is complete, ephemeral environments can significantly reduce cloud infrastructure costs compared to maintaining multiple permanent environments.
+  </Accordion>
 
-<Accordion title="Do you need to test branch-specific changes?">
-  Ephemeral environments make it easy to test changes from specific branches by
-  creating isolated environments that match your branch configuration.
-</Accordion>
+  <Accordion title="Do you need to test branch-specific changes?">
+    Ephemeral environments create isolated testing spaces that exactly match your branch configuration, making it easy to validate changes in context before merging to the main codebase.
+  </Accordion>
 
-  <Accordion title="Is your team growing?"> As teams scale, coordinating
-    environment usage becomes more challenging. Ephemeral environments give each
-  developer or team their own space to work without interference. </Accordion>
+  <Accordion title="Is your team growing?">
+    As teams scale, coordinating environment usage becomes increasingly challenging. Ephemeral environments eliminate contention by giving each developer or team their own dedicated space to work without interference.
+  </Accordion>
 </AccordionGroup>
 
-If you answered yes to any of these questions, implementing ephemeral
-environments could significantly improve your development workflow.
+If you answered yes to any of these questions, implementing ephemeral environments with Ctrlplane could significantly improve your development workflow and reduce operational overhead.
 
 ## Scenario
 
@@ -70,18 +64,15 @@ graph TD
 
 ## 1. Pull Request Resource Creation
 
-When using Ctrlplane for any system, you must first determine what resources
-represent the the existance of your deployment.
+When using Ctrlplane for any system, you must first determine what resources represent the existence of your deployment.
 
-In this case, we will use the GitHub pull request to determine if the ephemeral
-environment should be created and when it should be destroyed.
+In this case, we'll use GitHub pull requests to determine when ephemeral environments should be created and destroyed.
 
-This means Ctrlplane will follow the lifecycle of the pull request - creating
-the environment when the PR is opened and destroying it when the PR is merged or
-closed.
+This approach means Ctrlplane will follow the PR lifecycle:
+- Creating the environment when a PR is opened
+- Destroying it when the PR is merged or closed
 
-todo this we will need to create a Github that tracks and updates resources in
-ctrlplane as pull requests state changes.
+To implement this workflow, we'll create a GitHub workflow that tracks PR state changes and updates resources in Ctrlplane accordingly.
 
 Here is what it does:
 

@@ -1,22 +1,63 @@
 ---
 title: Define and Use Variables
 description: |
-  Learn how to define and use variables in Ctrlplane to create flexible and 
-  reusable deployment configurations across environments.
+  Learn how to create flexible, reusable deployment configurations with Ctrlplane variables
 ---
 
 ## Overview
 
-Variables in Ctrlplane allow you to create dynamic and reusable deployment
-configurations. By using variables, you can maintain consistent deployment
-processes while accommodating differences across environments, resources, and
-release channels.
+Variables in Ctrlplane make your deployments dynamic and adaptable. They let you maintain consistent processes while accommodating differences across environments, resources, and releases.
 
 ## Variable Types
 
-Ctrlplane supports several types of variables:
+Ctrlplane supports four primary variable types:
 
-- **Environment Variables**: Specific to deployment environments
-- **System Variables**: Available across an entire system
-- **Resource Variables**: Tied to specific resources
-- **Release Variables**: Associated with specific releases
+- **Environment Variables**: Values specific to each environment (dev, staging, production)
+  - Example: `database_url`, `log_level`, `api_endpoint`
+  
+- **System Variables**: Values shared across your entire system
+  - Example: `company_name`, `team_id`, `global_timeout`
+  
+- **Resource Variables**: Values specific to individual resources
+  - Example: `server_ip`, `instance_size`, `memory_allocation`
+  
+- **Release Variables**: Values tied to specific software releases
+  - Example: `version`, `release_notes`, `build_commit`
+
+## Defining Variables
+
+Variables can be defined in the Ctrlplane UI or API:
+
+1. Navigate to the appropriate section (Environment, System, Resource, or Release)
+2. Select "Variables" or "Configuration"
+3. Add variable key-value pairs
+4. Save your changes
+
+## Using Variables in Deployments
+
+Reference variables in your deployment scripts using double curly braces:
+
+```bash
+# Environment variable
+echo "Connecting to database at {{.environment.database_url}}"
+
+# System variable
+echo "Deploying for {{.system.company_name}}"
+
+# Resource variable
+echo "Server IP address: {{.resource.server_ip}}"
+
+# Release variable
+echo "Deploying version {{.release.version}}"
+```
+
+## Variable Inheritance and Precedence
+
+When variables with the same name exist at different levels:
+
+1. Resource variables take highest precedence
+2. Release variables are next
+3. Environment variables follow
+4. System variables have lowest precedence
+
+This hierarchy lets you define defaults at the system level while overriding them for specific environments, releases, or resources.

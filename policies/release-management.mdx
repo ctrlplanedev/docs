@@ -1,18 +1,37 @@
 ---
-title: Release Management
+title: Release Management Policies
 description: |
-  Manages new and pending releases in the deployment pipeline, defining 
-  rules to cancel or await pending releases for controlled, 
-  conflict-free execution.
+  Control how multiple releases are handled in your deployment pipeline to prevent conflicts and ensure orderly execution.
 ---
 
 ## Release Sequencing
 
-Specify whether pending releases should be cancelled or awaited when a new
-release is triggered.
+Release sequencing policies determine how Ctrlplane handles pending releases when a new one is triggered. This prevents deployment conflicts and maintains infrastructure stability.
 
-- **Cancel**: Stop pending releases.
-- **Await**: Wait for pending releases to complete.
+### Available Strategies
 
-This policy ensures orderly release execution, preventing conflicts and ensuring
-consistency across environments.
+- **Cancel Pending Releases**
+  - When activated: Immediately cancels any pending releases when a new release is triggered
+  - Best for: Environments where only the latest release matters
+  - Example use case: Development environments where you want to skip intermediate versions
+  
+- **Await Pending Releases**
+  - When activated: New releases wait for pending releases to complete before starting
+  - Best for: Production environments requiring sequential, complete deployments
+  - Example use case: Systems with database migrations that must execute in order
+
+### Configuration
+
+Configure release sequencing at the system or environment level:
+
+1. Navigate to System Settings or Environment Settings
+2. Select "Release Management" 
+3. Choose your preferred strategy
+4. Save your changes
+
+### Benefits
+
+- Prevents deployment collisions
+- Ensures correct execution order
+- Maintains deployment history
+- Reduces risk during complex deployments
