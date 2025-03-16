@@ -90,20 +90,20 @@ Let's compare Ctrlplane with other popular deployment tools across key features:
     | **Learning Curve** | 🔴 (Very steep) | 🟡 (Moderate) |
   </Tab>
   <Tab title="CI/CD Tools">
-    | Feature | Jenkins | GitLab CI/CD |
-    | ------- | ------- | ------------ |
-    | **Multi-Environment Management** | 🟡 (Manual) | 🟡 (Limited) |
-    | **Infrastructure As Code** | 🟡 (Via plugins) | 🟡 (Limited) |
-    | **Multi-Cloud Support** | 🟡 (Via plugins) | 🟡 (Limited) |
-    | **Approval Workflows** | 🟡 | 🟡 |
-    | **Complex Dependency Management** | 🟡 (Manual) | 🟡 (Limited) |
-    | **Multi-Tenancy** | 🟡 (Folder-based) | 🟡 (Groups/Projects) |
-    | **GUI Dashboard** | 🟡 | 🟢 |
-    | **Rollback Capability** | 🟡 (Manual) | 🟡 (Limited) |
-    | **Ephemeral Environments** | 🔴 | 🟡 (Limited) |
-    | **Policy Enforcement** | 🟡 (Via plugins) | 🟡 (Basic) |
-    | **Open Source** | 🟢 | 🟡 (Core) |
-    | **Managed Cloud Offering** | 🟡 (CloudBees) | 🟢 (GitLab.com) |
+    | Feature | Jenkins | GitLab CI/CD | TeamCity |
+    | ------- | ------- | ------------ | -------- |
+    | **Multi-Environment Management** | 🟡 (Manual) | 🟡 (Limited) | 🟡 (Limited) |
+    | **Infrastructure As Code** | 🟡 (Via plugins) | 🟡 (Limited) | 🟡 (Via Kotlin DSL) |
+    | **Multi-Cloud Support** | 🟡 (Via plugins) | 🟡 (Limited) | 🟡 (Via agents) |
+    | **Approval Workflows** | 🟡 | 🟡 | 🟡 (Basic) |
+    | **Complex Dependency Management** | 🟡 (Manual) | 🟡 (Limited) | 🟡 (Build chains) |
+    | **Multi-Tenancy** | 🟡 (Folder-based) | 🟡 (Groups/Projects) | 🟡 (Projects) |
+    | **GUI Dashboard** | 🟡 | 🟢 | 🟢 (Polished) |
+    | **Rollback Capability** | 🟡 (Manual) | 🟡 (Limited) | 🟡 (Artifact-based) |
+    | **Ephemeral Environments** | 🔴 | 🟡 (Limited) | 🔴 |
+    | **Policy Enforcement** | 🟡 (Via plugins) | 🟡 (Basic) | 🟡 (Via roles) |
+    | **Open Source** | 🟢 | 🟡 (Core) | 🔴 |
+    | **Managed Cloud Offering** | 🟡 (CloudBees) | 🟢 (GitLab.com) | 🟢 (TeamCity Cloud) |
     | **Resource Relationship Modeling** | 🔴 | 🔴 |
     | **Progressive Deployment** | 🟡 (Via scripts) | 🟡 (Limited) |
     | **API Extensibility** | 🟡 (Plugin-based) | 🟡 (Limited) |
@@ -233,6 +233,30 @@ Differences:
 **When to choose Octopus Deploy**: For teams with significant .NET/Windows deployments who prefer a commercial solution with dedicated support and are comfortable with its project/process model.
 
 **When to choose Ctrlplane**: For teams seeking an open-source solution with stronger multi-cloud support, more flexible resource modeling, advanced environment management, and cost visibility across infrastructure types.
+
+## Comparison with TeamCity
+
+**TeamCity** is a build management and continuous integration server developed by JetBrains.
+
+Similarities:
+- Both support multi-stage deployments
+- Both provide visualization of build/deployment processes
+- Both offer extensibility through plugins/integrations
+- Both support various version control systems
+
+Differences:
+- **Primary Focus**: TeamCity focuses primarily on build automation with deployment as a secondary feature, while Ctrlplane specializes in deployment orchestration
+- **Environment Model**: Ctrlplane has a richer environment model with policies and promotions, while TeamCity uses build configurations and deployment targets
+- **Resource Relationships**: Ctrlplane's resource relationship model allows for complex dependency management that TeamCity lacks
+- **Multi-Cloud Orchestration**: Ctrlplane provides native, sophisticated multi-cloud deployment capabilities beyond TeamCity's agent-based approach
+- **Deployment Intelligence**: Ctrlplane offers advanced deployment policies, automated rollbacks, and dependency analysis not available in TeamCity
+- **Self-Service Capabilities**: Ctrlplane offers better self-service deployment capabilities for developer teams
+- **Infrastructure Cost Tracking**: Ctrlplane provides native infrastructure cost tracking capabilities not present in TeamCity
+- **Ephemeral Environments**: Ctrlplane has strong native support for ephemeral environments that TeamCity doesn't offer
+
+**When to choose TeamCity**: When you need a powerful build server with basic deployment capabilities and are already invested in the JetBrains ecosystem.
+
+**When to choose Ctrlplane**: When you need sophisticated deployment orchestration across multiple environments and cloud providers, with advanced dependency management and policies.
 
 ## Technical Capabilities Comparison
 
