@@ -103,37 +103,68 @@
           "pages": [
             "api-reference/endpoints/create-an-environment",
             "api-reference/endpoints/get-an-environment",
-            "api-reference/endpoints/delete-an-environment-by-name",
-            "api-reference/endpoints/delete-an-environment"
+            "api-reference/endpoints/delete-an-environment",
+            "api-reference/endpoints/delete-an-environment-by-name"
           ]
         },
         {
-          "group": "Releases",
+          "group": "Workspaces",
           "pages": [
-            "api-reference/endpoints/upserts-a-release",
-            "api-reference/endpoints/create-a-release-channel"
-          ]
-        },
-        {
-          "group": "Resources",
-          "pages": [
-            "api-reference/endpoints/create-or-update-multiple-resources",
-            "api-reference/endpoints/get-a-resource-by-identifier",
-            "api-reference/endpoints/delete-a-resource",
-            "api-reference/endpoints/resource-relationships/create-a-relationship-between-two-resources",
-            "api-reference/endpoints/sets-the-resource-for-a-provider"
+            "api-reference/endpoints/get-a-workspace",
+            "api-reference/endpoints/get-a-workspace-by-slug"
           ]
         },
         {
           "group": "Systems",
           "pages": [
             "api-reference/endpoints/create-a-system",
+            "api-reference/endpoints/get-a-system",
+            "api-reference/endpoints/update-a-system",
             "api-reference/endpoints/delete-a-system"
           ]
         },
         {
+          "group": "Resources",
+          "pages": [
+            "api-reference/endpoints/create-or-update-multiple-resources",
+            "api-reference/endpoints/get-a-resource",
+            "api-reference/endpoints/get-a-resource-by-identifier",
+            "api-reference/endpoints/update-a-resource",
+            "api-reference/endpoints/delete-a-resource",
+            "api-reference/endpoints/delete-a-resource-by-identifier",
+            "api-reference/endpoints/sets-the-resource-for-a-provider"
+          ]
+        },
+        {
+          "group": "Resource Relationships",
+          "pages": [
+            "api-reference/endpoints/resource-relationships/create-a-relationship-between-two-resources",
+            "api-reference/endpoints/create-a-relationship-between-a-job-and-a-resource"
+          ]
+        },
+        {
+          "group": "Releases",
+          "pages": [
+            "api-reference/endpoints/upserts-a-release",
+            "api-reference/endpoints/updates-a-release",
+            "api-reference/endpoints/create-a-release-channel",
+            "api-reference/endpoints/delete-a-release-channel"
+          ]
+        },
+        {
           "group": "Jobs",
-          "pages": ["api-reference/endpoints/get-a-job"]
+          "pages": [
+            "api-reference/endpoints/get-a-job",
+            "api-reference/endpoints/update-a-job",
+            "api-reference/endpoints/acknowledge-a-job",
+            "api-reference/endpoints/acknowledge-a-job-for-an-agent",
+            "api-reference/endpoints/get-the-next-jobs",
+            "api-reference/endpoints/get-a-agents-running-jobs"
+          ]
+        },
+        {
+          "group": "Agents",
+          "pages": ["api-reference/endpoints/upserts-the-agent"]
         }
       ]
     },
