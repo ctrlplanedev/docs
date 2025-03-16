@@ -83,6 +83,10 @@
             "getting-started/approvals",
             "getting-started/define-and-use-variables"
           ]
+        },
+        {
+          "group": "Comparisons",
+          "pages": ["comparisons/overview", "comparisons/use-cases"]
         }
       ]
     },
