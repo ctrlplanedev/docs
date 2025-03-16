@@ -41,9 +41,9 @@ Let's compare Ctrlplane with other popular deployment tools across key features:
     | **Resource Relationship Modeling** | 🟢 (Advanced) |
     | **Progressive Deployment** | 🟢 (Advanced) |
     | **API Extensibility** | 🟢 (Comprehensive) |
-    | **Self-Service Portal** | 🟢 (Role-based) |
+    | **Developer Deployment Portal** | 🟢 (Role-based) |
     | **Compliance & Audit Trail** | 🟢 (Detailed) |
-    | **Learning Curve** | 🟢 (Moderate) |
+    | **Learning Curve** | 🟡 (Moderate) |
   </Tab>
   <Tab title="Kubernetes-focused">
     | Feature | ArgoCD | 
@@ -63,7 +63,7 @@ Let's compare Ctrlplane with other popular deployment tools across key features:
     | **Resource Relationship Modeling** | 🟡 (K8s objects only) |
     | **Progressive Deployment** | 🟡 (With Argo Rollouts) |
     | **API Extensibility** | 🟡 (Kubernetes API-based) |
-    | **Self-Service Portal** | 🔴 (Admin-focused) |
+    | **Developer Deployment Portal** | 🔴 (Admin-focused) |
     | **Compliance & Audit Trail** | 🟡 (Basic) |
     | **Learning Curve** | 🟡 (Steep for non-K8s users) |
   </Tab>
@@ -85,7 +85,7 @@ Let's compare Ctrlplane with other popular deployment tools across key features:
     | **Resource Relationship Modeling** | 🟡 (Pipeline-based) | 🟡 (Limited to processes) |
     | **Progressive Deployment** | 🟢 (Advanced) | 🟡 (Limited) |
     | **API Extensibility** | 🟡 (Complex) | 🟢 (REST API) |
-    | **Self-Service Portal** | 🔴 | 🟡 (Team-focused) |
+    | **Developer Deployment Portal** | 🔴 | 🟡 (Team-focused) |
     | **Compliance & Audit Trail** | 🟡 (Basic) | 🟢 (Detailed) |
     | **Learning Curve** | 🔴 (Very steep) | 🟡 (Moderate) |
   </Tab>
@@ -104,12 +104,12 @@ Let's compare Ctrlplane with other popular deployment tools across key features:
     | **Policy Enforcement** | 🟡 (Via plugins) | 🟡 (Basic) | 🟡 (Via roles) |
     | **Open Source** | 🟢 | 🟡 (Core) | 🔴 |
     | **Managed Cloud Offering** | 🟡 (CloudBees) | 🟢 (GitLab.com) | 🟢 (TeamCity Cloud) |
-    | **Resource Relationship Modeling** | 🔴 | 🔴 |
-    | **Progressive Deployment** | 🟡 (Via scripts) | 🟡 (Limited) |
-    | **API Extensibility** | 🟡 (Plugin-based) | 🟡 (Limited) |
-    | **Self-Service Portal** | 🔴 | 🟡 (Basic) |
-    | **Compliance & Audit Trail** | 🟡 (Via plugins) | 🟡 (Limited) |
-    | **Learning Curve** | 🔴 (Significant) | 🟡 (Moderate) |
+    | **Resource Relationship Modeling** | 🔴 | 🔴 | 🟡 (Build chains only) |
+    | **Progressive Deployment** | 🟡 (Via scripts) | 🟡 (Limited) | 🟡 (Via build chains) |
+    | **API Extensibility** | 🟡 (Plugin-based) | 🟡 (Limited) | 🟡 (Plugin-based) |
+    | **Developer Deployment Portal** | 🔴 | 🟡 (Basic) | 🔴 |
+    | **Compliance & Audit Trail** | 🟡 (Via plugins) | 🟡 (Limited) | 🟡 (Basic) |
+    | **Learning Curve** | 🔴 (Significant) | 🟡 (Moderate) | 🟡 (Moderate) |
   </Tab>
 </Tabs>
 
@@ -250,7 +250,7 @@ Differences:
 - **Resource Relationships**: Ctrlplane's resource relationship model allows for complex dependency management that TeamCity lacks
 - **Multi-Cloud Orchestration**: Ctrlplane provides native, sophisticated multi-cloud deployment capabilities beyond TeamCity's agent-based approach
 - **Deployment Intelligence**: Ctrlplane offers advanced deployment policies, automated rollbacks, and dependency analysis not available in TeamCity
-- **Self-Service Capabilities**: Ctrlplane offers better self-service deployment capabilities for developer teams
+- **Developer Deployment Experience**: Ctrlplane offers a dedicated portal for developers to manage their own deployments
 - **Infrastructure Cost Tracking**: Ctrlplane provides native infrastructure cost tracking capabilities not present in TeamCity
 - **Ephemeral Environments**: Ctrlplane has strong native support for ephemeral environments that TeamCity doesn't offer
 
