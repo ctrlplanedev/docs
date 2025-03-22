@@ -1,0 +1,163 @@
+---
+title: ClickHouse
+description: "ClickHouse integration"
+---
+
+## CLI ClickHouse Provider
+
+The ClickHouse scanner syncs ClickHouse Cloud instances into Ctrlplane, allowing
+you to monitor, manage, and deploy to your ClickHouse infrastructure.
+
+### Usage
+
+To sync in all ClickHouse instances, you'll need:
+
+1. A ClickHouse Cloud API key with read access to your organization
+2. Your ClickHouse organization ID
+
+You can create an API key in the [ClickHouse Cloud
+Console](https://console.clickhouse.cloud) under "API Keys".
+
+To see all available options, run:
+
+```bash
+ctrlc sync clickhouse --help
+```
+
+Here is a basic example of how to sync in all ClickHouse instances:
+
+```bash
+ctrlc sync clickhouse \
+    --clickhouse-key <CLICKHOUSE_API_KEY> \
+    --organization-id <ORG_ID> \
+    --interval 5m
+```
+
+You can also set environment variables for the API key and organization ID:
+
+```bash
+export CLICKHOUSE_API_KEY=<your-api-key>
+export CLICKHOUSE_ORGANIZATION_ID=<your-org-id>
+ctrlc sync clickhouse
+```
+
+## Resource Schemas
+
+### Service
+
+When syncing instances from ClickHouse, each service will have the following
+schema:
+
+<ResponseField name="version" type="string" default="clickhouse/v1">
+  The version of the schema
+</ResponseField>
+
+<ResponseField name="kind" type="string" default="Service">
+  The type of resource
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  Name of the service, derived from the ClickHouse service name
+</ResponseField>
+
+<ResponseField name="identifier" type="string">
+  The unique identifier of the service, in the format `organizationID/serviceID`
+</ResponseField>
+
+<ResponseField name="config" type="ClickHouse resource config">
+  <Expandable title="properties">
+    <ResponseField name="id" type="string">
+      The unique identifier of the service
+    </ResponseField>
+
+    <ResponseField name="name" type="string">
+      The name of the service
+    </ResponseField>
+
+    <ResponseField name="state" type="string">
+      The current state of the service (e.g., `RUNNING`, `STOPPED`)
+    </ResponseField>
+
+    <ResponseField name="region" type="string">
+      The cloud region where the service is deployed
+    </ResponseField>
+
+    <ResponseField name="cloudProvider" type="string">
+      The cloud provider hosting the service (AWS, GCP, or Azure)
+    </ResponseField>
+
+    <ResponseField name="tier" type="string">
+      The service tier
+    </ResponseField>
+
+    <ResponseField name="idleScaling" type="object">
+      The idle scaling configuration
+    </ResponseField>
+
+    <ResponseField name="totalDiskSize" type="integer">
+      The total disk size in GB
+    </ResponseField>
+
+    <ResponseField name="totalMemoryMB" type="integer">
+      The total memory in MB
+    </ResponseField>
+
+    <ResponseField name="minTotalMemory" type="integer">
+      The minimum total memory in MB
+    </ResponseField>
+
+    <ResponseField name="maxTotalMemory" type="integer">
+      The maximum total memory in MB
+    </ResponseField>
+
+    <ResponseField name="created" type="string">
+      The timestamp when the service was created
+    </ResponseField>
+
+    <ResponseField name="endpoints" type="object[]">
+      The service endpoints and connection information
+    </ResponseField>
+
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="metadata" type="ClickHouse resource metadata" description="The metadata of the service">
+  <Expandable title="properties">
+    <ResponseField name="clickhouse/id" type="string">
+      The unique identifier of the service
+    </ResponseField>
+
+    <ResponseField name="clickhouse/name" type="string">
+      The name of the service
+    </ResponseField>
+
+    <ResponseField name="clickhouse/state" type="string">
+      The current state of the service (e.g., `RUNNING`, `STOPPED`)
+    </ResponseField>
+
+    <ResponseField name="clickhouse/region" type="string">
+      The cloud region where the service is deployed (e.g., `us-east-1`)
+    </ResponseField>
+
+    <ResponseField name="clickhouse/cloud-provider" type="string">
+      The cloud provider hosting the service (e.g., `AWS`, `GCP`, or `AZURE`)
+    </ResponseField>
+
+    <ResponseField name="clickhouse/tier" type="string">
+      The service tier (e.g., `development`, `production`)
+    </ResponseField>
+
+    <ResponseField name="clickhouse/created" type="string">
+      The timestamp when the service was created
+    </ResponseField>
+
+    <ResponseField name="clickhouse/endpoints" type="string">
+      JSON string containing the service endpoints information
+    </ResponseField>
+
+    <ResponseField name="clickhouse/connection-string" type="string">
+      The primary connection string for the service (e.g., `hostname:8443`)
+    </ResponseField>
+
+  </Expandable>
+</ResponseField>
