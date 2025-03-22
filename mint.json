@@ -182,7 +182,8 @@
       "pages": [
         "integrations/saas/github",
         "integrations/saas/tailscale",
-        "integrations/saas/terraform-cloud"
+        "integrations/saas/terraform-cloud",
+        "integrations/saas/clickhouse"
       ]
     },
     {
