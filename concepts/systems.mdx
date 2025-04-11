@@ -11,103 +11,93 @@ description: |
   allowfullscreen
 />
 
-## Key Features of Systems
+## What are Systems?
 
-- **Deployment Organization:** Systems contain information about all associated
-  deployments, allowing for centralized management.
-- **Environment Standardization:** All deployments within a system share the
-  same set of environments, ensuring consistency across the deployment pipeline.
-- **Scalability:** Systems can accommodate as many deployments and environments
-  as needed, supporting growth and complexity in your infrastructure.
-- **Deployment Cycle Alignment:** Commonly used to group applications with
-  similar deployment cycles, facilitating coordinated releases.
-- **Access Control:** Systems provide a natural boundary for implementing
-  role-based access control (RBAC) policies.
+Systems in Ctrlplane are organizational units that group related deployments,
+environments, and resources. Think of a system as a logical container for an
+application or service that needs to be deployed and managed across your
+infrastructure.
 
-## System Structure
+Systems help you organize your deployments into meaningful groups, making it
+easier to manage complex infrastructure and application landscapes.
 
-1. **Deployments:** Each system can contain multiple deployments, representing
-   different applications or services.
-2. **Environments:** Systems define a set of environments (e.g., Development,
-   QA, Staging, Production) that are shared across all associated deployments.
-3. **Policies:** System-level policies can be applied to govern deployment
-   processes across all included deployments and environments.
-4. **Configurations:** Shared configurations can be defined at the system level
-   and inherited by deployments.
+## Key Characteristics
 
-## Benefits of Using Systems
+Each system in Ctrlplane has:
 
-- **Consistency:** Enforce uniform environments and deployment processes across
-  related projects.
-- **Simplified Management:** Centralize configuration and policy management at
-  the system level.
-- **Efficient Onboarding:** Quickly set up new deployments with pre-configured
-  environments and policies.
-- **Coordinated Releases:** Facilitate synchronized deployments for applications
-  with interdependencies.
-- **Improved Visibility:** Gain a holistic view of related deployments and their
-  statuses.
-- **Streamlined Governance:** Apply security and compliance policies
-  consistently across all deployments within a system.
+- **Name**: A human-readable identifier
+- **Slug**: A URL-friendly identifier for the system
+- **Description**: Information about what the system contains or represents
+- **Workspace**: Each system belongs to a specific workspace
 
-## Best Practices
+## Why Use Systems?
 
-1. **Logical Grouping:** Create systems based on application domains, teams, or
-   deployment cycles.
-2. **Standardized Environments:** Define a consistent set of environments that
-   make sense for your development and release processes.
-3. **Policy Enforcement:** Implement system-wide policies to ensure compliance
-   and security across all deployments.
-4. **Regular Review:** Periodically assess and update system configurations to
-   align with evolving organizational needs.
+Systems provide several benefits:
 
-## Example Use Case
+- **Organization**: Group related deployments logically
+- **Navigation**: Easily find and manage related components
+- **Consistency**: Apply shared configurations across related deployments
+- **Visibility**: See metrics and status across a complete application
+- **Access Control**: Manage permissions at a system level
 
-A typical use of systems might involve grouping all microservices for a
-particular product:
+## How Systems Relate to Other Components
 
-- **System:** "E-commerce Platform"
+### Systems and Deployments
 
-  - **Environments:** Dev, QA, Staging, Production
+Each system can contain multiple deployments. Deployments within a system
+typically represent different components or services that are part of the same
+application.
 
-  - **Deployments:**
+For example, a "Customer Portal" system might include deployments for:
 
-    - User Authentication Service
-    - Product Catalog Service
-    - Order Processing Service
-    - Payment Gateway Service
+- Frontend web application
+- Authentication service
+- Customer data API
+- Analytics dashboard
 
-  - **Shared Configurations:**
+### Systems and Environments
 
-    - Database connection strings
-    - API gateway settings
+Systems work with environments to create a matrix of deployment targets. An
+environment (like "Development" or "Production") can be applied across multiple
+systems.
 
-  - **System-wide Policies:**
+This allows you to:
 
-    - Automated rollback on failed deployments
-    - Required approvals for production deployments
+- Deploy a system to different environments
+- Apply consistent environment policies across systems
+- Track system performance in each environment
 
-By organizing these services under one system, you ensure they all progress
-through the same environments and adhere to consistent deployment policies,
-facilitating a coordinated release process for the entire e-commerce platform.
+### Systems and Resources
 
-## FAQ
+Resources (like Kubernetes clusters, VMs, or databases) can be selected by
+deployments within a system. This creates a connection between logical systems
+and the physical/virtual infrastructure they run on.
 
-<AccordionGroup>
-  <Accordion title='How should I organize my deployments into systems?'>
-Focus on these two crucial aspects:
+## System Lifecycle
 
-1. **Deployment Resources:** Ensure that all deployments within a system share
-   identical deployment resources. This is crucial because deployment pipelines
-   are structured to perform deployments on a uniform set of resources within
-   the system.
-2. **Environments:** Ensure that all deployments within a system operate within
-   the same environments and adhere to the same environment policies.
+```mermaid
+graph TD
+    Create[Create System]
+    Define[Define Environments]
+    Resources[Select Resources]
+    Deploy[Add Deployments]
+    Monitor[Monitor & Manage]
 
-Although this method may seem prescriptive, it provides a strong framework for
-managing deployments. It encourages the separation of software from
-infrastructure, leading to enhanced maintainability and fostering improved
-system ownership.
+    Create --> Define
+    Define --> Resources
+    Resources --> Deploy
+    Deploy --> Monitor
+    Monitor -.-> Resources
+```
 
-  </Accordion>
-</AccordionGroup>
+## Getting Started with Systems
+
+1. **Create a new system** with a descriptive name
+2. **Define environments** for the system (like dev, staging, production)
+3. **Create deployments** within the system
+4. **Select resources** that deployments will target
+5. **Monitor system health** across environments
+
+Systems are a foundational concept in Ctrlplane that help you organize your
+infrastructure in a way that matches your business needs and application
+architecture.
