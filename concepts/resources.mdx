@@ -1,86 +1,86 @@
 ---
 title: Resources
 description: |
-  Resources in Ctrlplane represent any entity that pipelines can execute
-  against. This includes traditional infrastructure (e.g., EKS clusters) and
-  abstract concepts (e.g., Salesforce accounts).
+  Resources are the fundamental building blocks of your infrastructure that
+  Ctrlplane discovers, manages, and deploys to. A resource represents any cloud or
+  infrastructure component your applications run on or interact with.
 ---
 
-<iframe
-  className="w-full aspect-video"
-  src="https://www.youtube.com/embed/aN_cxngJZHc"
-  frameborder="0"
-  allowfullscreen
-></iframe>
+Think of resources as a unified digital representation of your actual
+infrastructure - whether it's running in AWS, Google Cloud, Azure, or your own
+data centers. Resources bridge the gap between your physical/virtual
+infrastructure and the software that needs to run on it.
 
-## Key Features
+## Key Characteristics
 
-- **External Management:** Resources exist outside Ctrlplane (e.g., in cloud
-  infrastructure, CI/CD systems).
-- **Environment Association:** Resources are linked to specific Environments,
-  determining workflow triggers.
-- **Flexible Types:** Supports infrastructure-based and custom object Resources.
-- **Label-based Filtering:** Use labels for precise workflow resourceing.
+Each resource in Ctrlplane has:
 
-## Resource Lifecycle
+- **Identity**: Unique ID and human-readable name
+- **Classification**: Kind (e.g., "ClusterAPI", "VM", "VPC") and version
+- **Configuration**: Structured data specific to the resource type
+- **Metadata**: Key-value attributes providing additional context
+- **Relationships**: Connections to other resources (parent/child, dependencies)
 
-1. **Creation:**
+## Resource Types
 
-   - API-driven: Programmatically create Resources with custom configurations.
-   - Resource Providers: Automated discovery and registration based on
-     predefined criteria.
+Ctrlplane manages many types of resources, including:
 
-2. **Registration:** Link Resources to relevant Environments in Ctrlplane.
+- **Kubernetes Resources**: Clusters, Namespaces, VClusters
+- **Cloud Infrastructure**: VPCs, Subnets, Networks
+- **Compute Resources**: Virtual Machines, Container Instances
+- **Storage Resources**: Disks, Volumes, Object Storage
+- **Custom Resources**: Any infrastructure component you need to track
 
-3. **Workflow Triggering:**
+## How Resources Work
 
-   - On Resource addition to an Environment.
-   - On Resource updates (e.g., configuration changes).
-   - During new software releases (most common).
+### Discovery and Sync
 
-4. **Custom Deployments:** Resources can initiate infrastructure provisioning
-   workflows.
+Ctrlplane automatically discovers resources from your cloud providers through
+periodic scans. Once discovered, resources are:
 
-## Implementation Examples
+1. Added to your resource inventory
+2. Kept in sync with their actual state in your cloud environment
+3. Made available as deployment targets
 
-### EKS Cluster Resource
+### Resource Variables
 
-1. EKS cluster exists in AWS.
-2. Resource provider discovers and registers it with region/name labels.
-3. Environment created with matching region filter.
-4. New release triggers deployment to matching EKS cluster Resource.
+You can attach variables to resources to control how they behave during
+deployments. These variables can be:
 
-### Salesforce Account Resource
+- References to secrets required for access
+- Configuration values for deployments
+- Environment-specific settings
 
-1. New Salesforce account created.
-2. Custom workflow provisions Kubernetes resources and infrastructure.
-3. Resource provider registers new infrastructure components.
-4. Additional workflows configure infrastructure based on Salesforce settings.
+### Resource Relationships
 
-## Advanced Concepts
+Resources often have relationships with other resources. For example:
 
-- **Dynamic Workflows:** Customize actions based on Resource type and
-  Environment.
-- **Complex Filtering:** Combine labels for granular workflow control.
+- A VM belongs to a VPC
+- A Kubernetes Namespace runs on a Cluster
+- A Container Instance uses a Volume
 
-## Resource Registration Details
+Ctrlplane automatically detects and maintains these relationships, giving you a
+complete picture of your infrastructure.
 
-When registered in Ctrlplane, a Resource includes:
+## Why Resources Matter
 
-- **Metadata:** Kind, version, labels
-- **Configuration:** Schema-defined properties
-- **Status:** Current state (e.g., active, inactive, error)
+Resources provide critical benefits:
 
-Registration enables:
+- **Single Source of Truth**: Comprehensive inventory of all your infrastructure
+- **Environment Visibility**: Clear understanding of what's running where
+- **Deployment Targeting**: Precise control over where code and configurations
+  are deployed
+- **Dependency Management**: Awareness of resource connections and requirements
+- **Security Boundaries**: Clear separation between environments
 
-- Environment association via labels
-- Workflow triggering based on defined conditions
-- Visibility in Ctrlplane dashboard for monitoring and management
+## Getting Started with Resources
 
-## Environment Assignment
+1. **Connect your cloud providers** to discover resources automatically
+2. **Browse your resource inventory** to see what's available
+3. **Tag and organize resources** for better visibility
+4. **Create deployments** that target specific resources
+5. **Track resource health** and relationships through visualizations
 
-Resources are assigned to Environments using label-based filtering. Example:
-
-- Resource label: `environment: staging`
-- Environment filter: `environment: staging`
-- Result: Resource automatically added to "Staging" Environment
+Resources are the foundation of Ctrlplane's ability to provide controlled,
+observable, and reliable deployments across your entire infrastructure
+landscape.
