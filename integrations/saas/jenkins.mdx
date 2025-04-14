@@ -1,0 +1,178 @@
+---
+title: Jenkins
+description: "Jenkins integration for triggering pipeline jobs via Ctrlplane"
+---
+
+## Introduction
+
+The Ctrlplane Jenkins integration allows you to trigger Jenkins pipeline jobs 
+directly from Ctrlplane Deployments. This plugin installs a component within your 
+Jenkins instance that acts as a Ctrlplane "Job Agent", periodically polling your 
+Ctrlplane workspace for pending jobs assigned to it.
+
+## Architecture & Air-Gapped Environments
+
+This polling design has a key advantage for security and network configuration:
+
+*   **Egress Only:** The Jenkins instance only needs outbound (egress) network
+    access to reach the Ctrlplane API URL you configure.
+*   **No Ingress Required:** Ctrlplane *never* needs to initiate a connection
+    *into* your Jenkins instance. This means Jenkins can run in a restricted or
+    air-gapped network environment, provided it has a route to communicate
+    outwards to the Ctrlplane API. No inbound firewall rules or network
+    exposures are necessary for Jenkins related to this plugin.
+
+## Getting Started
+
+### Prerequisites
+
+*   A running Jenkins instance (version 2.426.3 or newer recommended).
+*   A Ctrlplane account and workspace.
+
+### Installation
+
+1.  **Download:** Obtain the latest plugin release (`ctrlplane-plugin.hpi`) from 
+    the [plugin's GitHub releases page](https://github.com/ctrlplanedev/jenkins-plugin/releases).
+2.  **Upload:** Navigate to your Jenkins instance: **Manage Jenkins** -> 
+    **Plugins** -> **Advanced settings** tab.
+3.  **Deploy:** Under the **Deploy Plugin** section (or **Upload Plugin** in 
+    newer Jenkins versions), click **Choose File**, select the downloaded 
+    `ctrlplane-plugin.hpi` file, and click **Deploy**.
+4.  **Restart Safely:** Jenkins needs to be restarted for the plugin to become 
+    active.
+    *   **Recommended:** Check the box **"Restart Jenkins when installation is 
+        complete and no jobs are running"** if available during the upload 
+        process.
+    *   **Manual Restart:** Alternatively, go to **Manage Jenkins**, click 
+        **"Prepare for Shutdown"** to allow running jobs to complete, and then 
+        manually restart the Jenkins service when it's safe.
+
+### Configuration (Global Jenkins Settings)
+
+Once Jenkins restarts with the plugin installed, you need to configure it to 
+connect to your Ctrlplane workspace:
+
+1.  Navigate to **Manage Jenkins** -> **System**.
+2.  Scroll down to find the **Ctrlplane Plugin** section.
+3.  Fill in the following fields:
+    *   **API URL:** The base URL of your Ctrlplane API endpoint 
+        (e.g., `https://app.ctrlplane.dev`).
+    *   **API Key:** An API key generated within your Ctrlplane 
+        workspace with permissions to interact with jobs and agents.
+    *   **Agent ID:** A unique name to identify *this specific Jenkins 
+        instance* within Ctrlplane (e.g., `jenkins-agent`). This 
+        name will appear in Ctrlplane when selecting a Job Agent.
+    *   **Agent Workspace ID:** The UUID of the Ctrlplane Workspace this Jenkins 
+        agent should belong to. Navigate to your Ctrlplane workspace settings 
+        (Workspace Name > Workspace Settings > General) and copy the Workspace UUID to your clipboard.
+        The URL will look like: `https://app.ctrlplane.dev/{workspace}/settings/workspace/general`
+    *   **Polling Interval (seconds):** The frequency (in seconds) at which the 
+        Jenkins Job Agent will poll the Ctrlplane API for new jobs.
+
+4.  Click **Save**.
+
+### Linking Ctrlplane Deployment to Jenkins Agent
+
+After configuring and saving the global settings:
+
+1.  **Agent Registration:** The plugin's poller will automatically attempt to 
+    register this Jenkins instance as a Job Agent with your Ctrlplane workspace 
+    using the details you provided.
+2.  **Verify Agent in Ctrlplane:** Navigate to your Ctrlplane workspace UI, 
+    usually under a section for Job Agents. The URL might look like 
+    `http://{CTRLPLANE_URL}/{WORKSPACE_ID}/job-agents`. You should see the 
+    **Agent Name** you configured listed there.
+3.  **Configure Ctrlplane Deployment:**
+    *   Go to the specific Deployment in Ctrlplane that you want to trigger 
+        Jenkins jobs from (e.g., 
+        `http://{CTRLPLANE_URL}/{WORKSPACE_ID}/systems/{SYSTEM_NAME}/deployments/{DEPLOYMENT_NAME}/workflow`).
+    *   In the Deployment's workflow configuration, find the **Job Agent** 
+        setting. Select the **Agent Name** of your Jenkins instance from the 
+        dropdown list.
+    *   Configure the **Job URL Path**. This is crucial. It tells the plugin 
+        *which specific Jenkins job* to trigger. The format must be the full 
+        path from the Jenkins root URL, including all `/job/` segments for 
+        folders or multibranch pipelines.
+        *   **Example (Freestyle/Pipeline Job):** If your Jenkins job URL is 
+            `http://myjenkins.com:8080/job/MySimpleJob/`, the Job URL Path would 
+            be `/job/MySimpleJob/`.
+        *   **Example (Folder/Multibranch):** If your Jenkins job URL is 
+            `http://myjenkins.com:8080/job/MyOrg/job/MyRepo/job/main/`, the Job 
+            URL Path would be `/job/MyOrg/job/MyRepo/job/main/`.
+    *   Save the Deployment configuration in Ctrlplane.
+
+## Pipeline Usage
+
+When a Ctrlplane Deployment configured with your Jenkins Job Agent and Job URL 
+Path is triggered, the plugin will:
+
+1.  Detect the pending job via polling.
+2.  Trigger the specified Jenkins pipeline job.
+3.  Automatically inject the following parameters into the Jenkins job:
+    *   `JOB_ID`: The UUID of the triggering Ctrlplane job.
+4.  Report the job status back to Ctrlplane.
+
+### Accessing Job Details in Jenkinsfile
+
+Your Jenkins pipeline can use the injected `JOB_ID` parameter to fetch more 
+details about the Ctrlplane job using the custom pipeline step `ctrlplaneGetJob` 
+provided by this plugin. This step uses the API URL and Key configured globally 
+in Jenkins, so you don't need to manage credentials within the pipeline itself 
+for this purpose.
+
+```groovy
+// example.Jenkinsfile
+import groovy.json.JsonOutput // Keep for pretty printing
+
+pipeline {
+    agent any
+
+    parameters {
+        // JOB_ID is the only parameter needed now, passed by the plugin trigger
+        string(name: 'JOB_ID', defaultValue: '', description: 'Ctrlplane Job ID passed by the plugin')
+    }
+
+    stages {
+        stage('Fetch Ctrlplane Job Details') { // Stage name can be anything
+            steps {
+                script {
+                    if (!params.JOB_ID) {
+                        error 'JOB_ID parameter is required'
+                    }
+
+                    echo "Fetching details for Job ID: ${params.JOB_ID}"
+
+                    // Call the custom step provided by the plugin
+                    // Jenkins maps 'ctrlplaneGetJob' to your CtrlplaneGetJobStep class
+                    // The step accesses global config for API URL and Key internally
+                    def jobDetails = ctrlplaneGetJob jobId: params.JOB_ID
+
+                    // If the step failed (e.g., API error, config missing),
+                    // it throws AbortException, failing the pipeline.
+                    // So, if we reach here, it was successful.
+
+                    echo "-----------------------------------------"
+                    echo "Successfully fetched job details:"
+                    echo JsonOutput.prettyPrint(JsonOutput.toJson(jobDetails))
+                    echo "-----------------------------------------"
+
+                    // Example: Access specific fields from the returned map
+                    // echo "Status: ${jobDetails.status}"
+                    // echo "Message: ${jobDetails.message}"
+                    // if(jobDetails.variables) {
+                    //    echo "Specific Variable: ${jobDetails.variables.your_variable_name}" // Replace with actual variable key
+                    // }
+                    // if(jobDetails.metadata) {
+                    //    echo "Metadata Value: ${jobDetails.metadata.your_metadata_key}" // Replace with actual metadata key
+                    // }
+                }
+            }
+        }
+        // Add other pipeline stages here
+    }
+}
+```
+
+This setup allows Ctrlplane to orchestrate deployments by triggering specific 
+Jenkins jobs, while the Jenkins jobs can securely retrieve necessary context 
+from Ctrlplane using the provided `JOB_ID` and the custom pipeline step.
