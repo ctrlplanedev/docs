@@ -4,110 +4,48 @@ description: |
   Environments are system-level resource groupings that represent distinct deployment stages (like dev, staging, production) and control how software progresses through your infrastructure.
 ---
 
-<iframe
-  className="w-full aspect-video"
-  src="https://www.youtube.com/embed/oe3OhfjlLSk"
-  frameborder="0"
-  allowfullscreen
-/>
+Environments in Ctrqzlplane are organizational units that group related resources
+and deployments within a system. They represent different deployment targets
+like "Development", "Staging", or "Production".
 
-## Key Concepts
+## Key Properties
 
-### System-Level Definition
+- **ID**: Unique identifier (UUID)
+- **Name**: Human-readable identifier
+- **System ID**: The system this environment belongs to
+- **Directory**: Path structure for organization
+- **Description**: Additional information about the environment
+- **Policy ID**: References environment policies that control deployment rules
+- **Resource Selector**: Conditions to select which resources belong to this environment
+- **Metadata**: Key-value pairs for additional context
 
-Environments are defined at the system level, ensuring consistency across all
-deployments within a system. This approach allows for standardized progression
-of releases through predefined stages.
+## How Environments Work
 
-### Environment Policies
+Environments work with systems to create a matrix of deployment targets. Each
+system can have multiple environments, allowing for deploying a system to
+different environments (dev, staging, production, etc.).
 
-Environment policies determine how deployments move from one environment's
-resources to the next. These policies can include:
+## Environment Policies
 
-- Approval workflows
-- Automated checks
-- Rollback strategies
-- Deployment windows
+Environments have associated policies that control:
 
-### Resource Filters
+- Approval requirements (manual or automatic)
+- Deployment success criteria (all, some, or optional)
+- Concurrency limits for deployments
+- Rollout durations (gradual deployment)
+- Release sequencing (wait or cancel)
+- Release windows (time periods when deployments are allowed)
 
-Each environment uses resource filters to dynamically determine which resources
-are associated with it. This feature allows for flexible and automatic
-assignment of resources to environments based on their characteristics.
+## Lifecycle Events
 
-## Dynamic Resource Association
+When an environment is updated (particularly its resource selector), the system:
 
-The use of resource filters enables dynamic addition and removal of resources
-from environments. As a result:
+1. Finds resources that newly match the selector
+2. Finds resources that no longer match the selector
+3. Creates release targets for newly matched resources
+4. Removes release targets for unmatched resources
+5. Dispatches appropriate hooks when resources enter or exit environments
 
-1. Pipelines and deployments automatically run against newly added resources.
-2. New software releases or upgrades are automatically applied to relevant
-   resources.
-
-This dynamic association ensures that your deployment process remains agile and
-responsive to changes in your infrastructure.
-
-## Scalability for Distributed Systems
-
-In large-scale distributed systems, you may have multiple production
-environments, each corresponding to a different deployment region. This setup
-allows for:
-
-- Staggered rollouts across regions
-- Region-specific configurations
-- Improved fault isolation
-
-For example, you might have production environments like `prod-us-west`,
-`prod-us-east`, `prod-eu-central`, each with its own set of resources and
-potentially different rollout schedules.
-
-## Benefits of Using Environments
-
-1. **Structured Deployment Process**: Clearly defined stages for software
-   progression.
-2. **Consistency**: Standardized environments across all deployments in a
-   system.
-3. **Flexibility**: Dynamic resource association allows for easy scaling and
-   infrastructure changes.
-4. **Control**: Environment policies provide fine-grained control over the
-   deployment process.
-5. **Visibility**: Clear overview of where software versions are deployed across
-   your infrastructure.
-
-## Example Environment Setup
-
-A typical environment setup might include:
-
-1. **Development**: For ongoing development work
-2. **QA**: For quality assurance and testing
-3. **Staging**: A pre-production environment mirroring production
-4. **Production**: Multiple production environments for different regions
-
-Each of these environments would have its own resource filters and policies,
-ensuring that software progresses through the pipeline in a controlled and
-consistent manner.
-
-## Implementation in Ctrlplane
-
-In Ctrlplane, environments are typically managed through the UI or API. The
-environment configuration includes:
-
-1. Name and description
-2. Resource filters
-3. Associated policies
-4. Any environment-specific variables or configurations
-
-For example, creating an environment might involve setting up resource filters
-like:
-
-```yaml
-environment: staging
-region: us-west
-```
-
-This would automatically associate all resources with matching labels to the
-staging environment in the US West region.
-
-By leveraging environments effectively in Ctrlplane, you can create a robust,
-scalable, and flexible deployment pipeline that adapts to your infrastructure
-needs while maintaining control and visibility over your software releases.
+Environments act as a key organizational and policy enforcement layer in the
+deployment process, controlling how and when deployments can occur to different
+resources within systems.
