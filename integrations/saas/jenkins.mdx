@@ -3,6 +3,17 @@ title: Jenkins
 description: "Jenkins integration for triggering pipeline jobs via Ctrlplane"
 ---
 
+## Setup Overview
+
+Setting up the Ctrlplane Jenkins integration involves the following steps in order:
+
+1. **Install the Plugin** - Add the Ctrlplane plugin to your Jenkins instance
+2. **Configure Global Settings** - Set up the API connection and agent configuration
+3. **Create a Jenkins Pipeline Job** - Define your Jenkins pipeline job with the Ctrlplane integration
+4. **Link to Ctrlplane Deployment** - Configure the Jenkis to trigger for your Ctrlplane Deployment
+
+Following this sequence is important as each step depends on the previous one being completed successfully.
+
 ## Introduction
 
 The Ctrlplane Jenkins integration allows you to trigger Jenkins pipeline jobs 
@@ -78,52 +89,24 @@ connect to your Ctrlplane workspace:
         (e.g., `https://app.ctrlplane.dev`).
     *   **API Key:** An API key generated within your Ctrlplane 
         workspace with permissions to interact with jobs and agents.
+        *   Get your API key from `<Workspace Name> > Workspace Settings > API Keys`.
     *   **Agent ID:** A unique name to identify *this specific Jenkins 
-        instance* within Ctrlplane (e.g., `jenkins-agent`). This 
+        instance* within Ctrlplane (e.g. `jenkins-agent`). This 
         name will appear in Ctrlplane when selecting a Job Agent.
     *   **Agent Workspace ID:** The UUID of the Ctrlplane Workspace this Jenkins 
-        agent should belong to. Navigate to your Ctrlplane workspace settings 
-        (Workspace Name > Workspace Settings > General) and copy the Workspace UUID to your clipboard.
-        The URL will look like: `https://app.ctrlplane.dev/{workspace}/settings/workspace/general`
+        agent should belong to.
+        *   Get your workspace ID from `<Workspace Name> > Workspace Settings > General`
     *   **Polling Interval (seconds):** The frequency (in seconds) at which the 
         Jenkins Job Agent will poll the Ctrlplane API for new jobs.
 
 4.  Click **Save**.
 
-### Linking Ctrlplane Deployment to Jenkins Agent
+### Setting up a Jenkins Pipeline Job
 
-After configuring and saving the global settings:
+Before you can link a Ctrlplane Deployment to your Jenkins agent, you need to create 
+and configure a Jenkins pipeline job that can process the Ctrlplane job data.
 
-1.  **Agent Registration:** The plugin's poller will automatically attempt to 
-    register this Jenkins instance as a Job Agent with your Ctrlplane workspace 
-    using the details you provided.
-2.  **Verify Agent in Ctrlplane:** Navigate to your Ctrlplane workspace UI, 
-    usually under a section for Job Agents. The URL might look like 
-    `http://{CTRLPLANE_URL}/{WORKSPACE_ID}/job-agents`. You should see the 
-    **Agent Name** you configured listed there.
-3.  **Configure Ctrlplane Deployment:**
-    *   Go to the specific Deployment in Ctrlplane that you want to trigger 
-        Jenkins jobs from (e.g., 
-        `http://{CTRLPLANE_URL}/{WORKSPACE_ID}/systems/{SYSTEM_NAME}/deployments/{DEPLOYMENT_NAME}/workflow`).
-    *   In the Deployment's workflow configuration, find the **Job Agent** 
-        setting. Select the **Agent Name** of your Jenkins instance from the 
-        dropdown list.
-    *   Configure the **Job URL Path**. This is crucial. It tells the plugin 
-        *which specific Jenkins job* to trigger. The format must be the full 
-        path from the Jenkins root URL, including all `/job/` segments for 
-        folders or multibranch pipelines.
-        *   **Example (Freestyle/Pipeline Job):** If your Jenkins job URL is 
-            `http://myjenkins.com:8080/job/MySimpleJob/`, the Job URL Path would 
-            be `/job/MySimpleJob/`.
-        *   **Example (Folder/Multibranch):** If your Jenkins job URL is 
-            `http://myjenkins.com:8080/job/MyOrg/job/MyRepo/job/main/`, the Job 
-            URL Path would be `/job/MyOrg/job/MyRepo/job/main/`.
-    *   Save the Deployment configuration in Ctrlplane.
-
-## Pipeline Usage
-
-When a Ctrlplane Deployment configured with your Jenkins Job Agent and Job URL 
-Path is triggered, the plugin will:
+When the Jenkins Job Agent (plugin) detects a pending job in Ctrlplane, it will:
 
 1.  Detect the pending job via polling.
 2.  Trigger the specified Jenkins pipeline job.
@@ -131,7 +114,7 @@ Path is triggered, the plugin will:
     *   `JOB_ID`: The UUID of the triggering Ctrlplane job.
 4.  Report the job status back to Ctrlplane.
 
-### Accessing Job Details in Jenkinsfile
+#### Accessing Job Details in Jenkinsfile
 
 Your Jenkins pipeline can use the injected `JOB_ID` parameter to fetch more 
 details about the Ctrlplane job using the custom pipeline step `ctrlplaneGetJob` 
@@ -191,6 +174,40 @@ pipeline {
     }
 }
 ```
+
+You can then use the job details in your Jenkins pipeline job to:
+* **Build** your application
+* **Run** tests
+* **Deploy** to a target environment
+
+### Linking Ctrlplane Deployment to Jenkins Agent
+
+After configuring the Jenkins global settings and creating your pipeline job, you can 
+now link a Ctrlplane Deployment to use your Jenkins agent.
+
+To configure which Jenkins Job a Ctrlplane Deployment should use as part of its workflow, you need to:
+
+1.  **Verify Agent in Ctrlplane:** Navigate to your Ctrlplane workspace Agent UI. The URL might look like 
+    `http://{CTRLPLANE_URL}/{WORKSPACE_ID}/job-agents`. You should see the 
+    **Agent ID** you configured listed there.
+2.  **Configure Ctrlplane Deployment:**
+    *   Go to the specific Deployment in Ctrlplane that you want to trigger 
+        Jenkins jobs from (e.g., 
+        `http://{CTRLPLANE_URL}/{WORKSPACE_ID}/systems/{SYSTEM_NAME}/deployments/{DEPLOYMENT_NAME}/workflow`).
+    *   In the Deployment's workflow configuration, find the **Job Agent** 
+        setting. Select the **Agent ID** of your Jenkins instance from the 
+        dropdown list.
+    *   Configure the **Job URL Path**. This is crucial. It tells the plugin 
+        *which specific Jenkins job* to trigger. The format must be the full 
+        path from the Jenkins root URL, including all `/job/` segments for 
+        folders or multibranch pipelines.
+        *   **Example (Freestyle/Pipeline Job):** If your Jenkins job URL is 
+            `http://myjenkins.com:8080/job/MySimpleJob/`, the Job URL Path would 
+            be `/job/MySimpleJob/`.
+        *   **Example (Folder/Multibranch):** If your Jenkins job URL is 
+            `http://myjenkins.com:8080/job/MyOrg/job/MyRepo/job/main/`, the Job 
+            URL Path would be `/job/MyOrg/job/MyRepo/job/main/`.
+    *   Save the Deployment workflow configuration in Ctrlplane.
 
 This setup allows Ctrlplane to orchestrate deployments by triggering specific 
 Jenkins jobs, while the Jenkins jobs can securely retrieve necessary context 
