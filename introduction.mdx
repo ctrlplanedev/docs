@@ -10,33 +10,35 @@ Ctrlplane streamlines and automates complex deployment processes across diverse 
 
 Here's what Ctrlplane offers:
 
-| Capability               | Enables you to...                                                                                                                                       |
-| :----------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Deployment Orchestration | Coordinate complex multi-environment deployments, enforce governance policies, and automate sophisticated rollout strategies across your infrastructure |
-| Environment Management   | Create standardized environments with consistent configurations, manage environment-specific variables, and maintain deployment targets at scale        |
-| Integration & Tools      | Connect seamlessly with existing CI/CD pipelines, major cloud providers (AWS, Azure, GCP), and container platforms like Kubernetes and Docker           |
-| Release Management       | Track deployment status in real-time, implement version control policies, manage rollouts and rollbacks, and maintain deployment history                |
-| Policy Controls          | Define and enforce deployment rules, implement role-based access control, maintain audit logs, and ensure compliance across teams                       |
-| Automation               | Streamline repetitive deployment tasks, manage service dependencies, and scale deployments efficiently across multiple targets                          |
+| Capability               | Enables you to...                                                                                                                                                |
+| :----------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Deployment Orchestration | Coordinate deployments across environments, enforce policies, and automate rollout strategies across your infrastructure                                        |
+| Version Management       | Track multiple versions of your software, define version dependencies, and control which versions deploy to which environments                                   |
+| Environment Management   | Organize resources into environments (dev, staging, prod), apply environment-specific policies, and control deployment progression                               |
+| Integration & Tools      | Connect with CI/CD systems (GitHub Actions, GitLab CI, Jenkins), cloud providers (AWS, GCP, Azure), and execution platforms (Kubernetes, custom scripts)        |
+| Policy Controls          | Define approval gates, concurrency limits, rollout durations, environment dependencies, and release channels to control deployments                              |
+| Resource Management      | Automatically discover infrastructure from cloud providers, organize with metadata, and target deployments using flexible selectors                              |
+| Job Agents               | Execute deployment tasks via pluggable agents that integrate with your existing infrastructure and CI/CD tools                                                   |
 
 ### Common Use Cases
 
-- **Multi-Environment Deployments**: Coordinate releases across development,
-  staging, and production environments with sophisticated scheduling and
-  dependency management
+- **Multi-Environment Deployments**: Coordinate deployment versions across dev,
+  staging, and production with policy-based progression and approval gates
 
-- **Cloud & Container Operations**: Deploy and manage applications across
-  multiple cloud providers and container orchestration platforms from a single
-  control plane
+- **Cloud & Container Operations**: Deploy applications across Kubernetes,
+  cloud VMs, and serverless platforms with unified orchestration
 
-- **Enterprise Governance**: Implement comprehensive access controls, maintain
-  audit trails, and enforce organizational deployment policies
+- **Progressive Delivery**: Implement canary deployments, blue-green
+  deployments, and gradual rollouts with concurrency controls
 
-- **Infrastructure Scaling**: Automate deployment processes and efficiently
-  manage resources as your infrastructure grows
+- **Version Management**: Track dependencies between services, ensure compatible
+  versions are deployed together, and manage complex microservice architectures
 
-- **Release Automation**: Streamline the entire release lifecycle from
-  development to production with automated workflows and policy enforcement
+- **Deployment Governance**: Enforce approval workflows, deployment windows,
+  environment dependencies, and compliance policies
+
+- **Infrastructure at Scale**: Manage deployments across hundreds or thousands
+  of resources with automated discovery and flexible targeting
 
 ## Start building with Ctrlplane
 

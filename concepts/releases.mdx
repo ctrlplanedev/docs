@@ -1,109 +1,127 @@
 ---
-title: Releases
+title: Deployment Versions
 description: |
-  A release in Ctrlplane represents a specific version or iteration of your
-  software or infrastructure configuration that is ready to be deployed. It is a
-  crucial component of the deployment process, serving as a snapshot of your
-  application or system at a particular point in time.
+  A deployment version in Ctrlplane represents a specific version or iteration
+  of your software or infrastructure that is ready to be deployed. Each
+  deployment version is a snapshot of your application at a particular point in
+  time, tagged with a unique identifier.
 ---
 
-Remember, the actual building and packaging of your software should be handled
-by your existing CI pipelines or build systems. Ctrlplane takes over from the
-point where your software is built and ready for distribution, solving the
-complex problem of managing deployments across a large and potentially diverse
-set of resources.
+Deployment versions are how Ctrlplane tracks what to deploy. Your CI/CD pipeline
+builds and packages your software, then creates a deployment version in
+Ctrlplane to trigger deployments across your infrastructure.
 
-## Key Characteristics of Releases
+## Key Characteristics of Deployment Versions
 
-1. **Version Representation**: Each release typically corresponds to a specific
-   version of your codebase or infrastructure definition.
+1. **Version Identification**: Each deployment version has:
+   - **Tag**: A unique identifier within the deployment (e.g., `v1.2.3`,
+     `main-abc123`, `pr-456`)
+   - **Name**: A human-readable name for the version
+   - **Created timestamp**: When the version was registered
 
-2. **Deployment Association**: Releases are created as part of a deployment in
-   Ctrlplane. They represent the content that will be deployed across various
-   environments and resources.
+2. **Deployment Association**: Deployment versions belong to a specific
+   deployment. Each deployment can have many versions over time.
 
-3. **External Build Process**: Ctrlplane does not manage the build process for
-   releases. The actual compilation, packaging, or preparation of your software
-   should be handled by your existing CI/CD pipelines or build systems.
+3. **External Build Process**: Ctrlplane does not build your software - that's
+   handled by your existing CI/CD pipelines. Ctrlplane takes over after the
+   build is complete, orchestrating how and where it gets deployed.
 
-4. **Creation Methods**: Releases can be created in two primary ways:
+4. **Creation Methods**: Deployment versions are typically created via:
+   - The Ctrlplane REST API (from your CI/CD pipeline)
+   - Ctrlplane integrations (e.g., GitHub Actions, GitLab CI)
+   - The Ctrlplane UI (for manual deployments)
 
-   - Through the Ctrlplane UI
-   - Via the Ctrlplane API
-   - Using a Ctrlplane integration
+5. **Configuration Data**: Each version can include custom configuration:
+   - Docker image tags
+   - Git commit SHAs
+   - Build artifacts locations
+   - Any deployment-specific configuration
 
-5. **Metadata**: A release often includes metadata such as version numbers,
-   commit hashes, build timestamps, or other relevant information to identify
-   and track the release.
+6. **Status Tracking**: Deployment versions have a status:
+   - `building`: Version is still being prepared
+   - `ready`: Version is ready to be deployed
+   - `failed`: Version build failed
+   - `rejected`: Version was rejected and should not be deployed
 
-6. **Immutability**: Once created, a release is typically considered immutable.
-   This ensures consistency across different environments and enables reliable
-   rollbacks if needed.
+## Version Dependencies
 
-## Release Dependencies
+Deployment versions can declare dependencies on specific versions of other
+deployments. This ensures that services are only deployed when their dependencies
+are satisfied.
 
-Since Ctrlplane is meant for solving the way releases are deployed across
-resources, it's very common to have version dependencies on other deployments.
-In the world of software, this could mean a microservice depends on a specific
-version of another microservice to ensure it has the required APIs.
+Common use cases for version dependencies:
 
-In the case of software and infrastructure interactions, this could require a
-minimum version of a database that is necessary to deploy the software, or a set
-list of Kubernetes versions that the software supports.
+1. **Microservice Dependencies**: A frontend service requires a minimum version
+   of a backend API to ensure required endpoints are available.
 
-To address these needs, Ctrlplane supports release dependencies. When defining a
-release, you can also specify which versions it depends on from other
-deployments. This feature allows you to:
+2. **Infrastructure Requirements**: An application requires a specific database
+   version or Kubernetes version range.
 
-1. **Ensure Compatibility**: Guarantee that your release is only deployed to
-   environments where its dependencies are met.
+3. **Feature Flags**: A service version depends on another service having a
+   specific feature enabled.
 
-2. **Manage Complex Systems**: Easily handle intricate relationships between
-   different components of your system.
+4. **Breaking Changes**: Prevent deployment of incompatible versions across
+   services.
 
-3. **Prevent Deployment Issues**: Avoid potential problems caused by
-   incompatible versions of interdependent services or infrastructure.
+### How Version Dependencies Work
 
-4. **Facilitate Upgrades**: Clearly define the upgrade path for your entire
-   system by specifying version requirements.
+When creating a deployment version, you can specify dependencies:
 
-When creating a release, you can define expresions to determine what version of
-other deployments is required.
+```json
+{
+  "deploymentId": "frontend-app-id",
+  "tag": "v2.0.0",
+  "dependencies": [
+    {
+      "deploymentId": "backend-api-id",
+      "versionSelector": {
+        "type": "comparison",
+        "operator": "greaterThanOrEqual",
+        "key": "version",
+        "value": "v1.5.0"
+      }
+    }
+  ]
+}
+```
 
-### Managing Dependencies with Resource Metadata Grouping
+Ctrlplane will only deploy `frontend-app v2.0.0` to resources where the
+`backend-api` deployment is at version `v1.5.0` or higher.
 
-In most cases, a resource has multiple deployments associated with it, making it
-easy to verify if a specific version is deployed on that resource as required by
-another deployment. However, complexities arise when dependencies involve other
-resources, where the deployment version might be present on any of these
-dependent resources.
+### Dependency Evaluation
 
-To address this, Ctrlplane uses resource metadata grouping. This mechanism
-allows you to logically group resources based on their metadata attributes. By
-doing so, Ctrlplane can accurately determine which resources to inspect to
-verify if the software has been deployed.
+Dependencies are evaluated at the release target level. For a version to be
+deployed to a specific resource in a specific environment, all its dependencies
+must be satisfied on that same resource.
 
-The idea is to create logical associations between resources that share common
-characteristics, such as being part of the same kubernetes cluster. This is
-particularly useful in complex infrastructures or distributed systems where
-deployments span multiple infrastructure components.
+For cross-resource dependencies (e.g., checking if a database is deployed in the
+same cluster), you can use resource metadata and selectors to define the
+dependency scope.
 
-For example:
+### Dependency Selectors
 
-1. **Single Cluster Deployment**: If you have a single Kubernetes namespace
-   represented by a resource, you can easily check if a version is deployed on
-   that cluster without additional grouping if that resource is used by all the
+Version selectors support various comparison operators:
+
+- **Equals**: Exact version match
+- **Not Equals**: Any version except the specified one
+- **Greater Than**: Semantic version comparison
+- **Less Than**: Semantic version comparison
+- **Regex**: Pattern matching on version tags
+- **Filters**: Complex metadata-based filtering
+
+### Best Practices
+
+1. **Semantic Versioning**: Use semantic versioning for clearer dependency
+   specifications.
+
+2. **Minimum Versions**: Prefer specifying minimum versions rather than exact
+   matches for flexibility.
+
+3. **Test Dependencies**: Verify dependency chains in non-production
+   environments first.
+
+4. **Document Dependencies**: Keep documentation of why specific version
+   dependencies exist.
+
+5. **Circular Dependencies**: Avoid circular dependency chains that prevent
    deployments.
-
-2. **Multiple Clusters Deployment**: If you have multiple Kubernetes namespaces,
-   you might need to group resources by cluster name. This way, Ctrlplane can
-   check all namespaces within the specified cluster to determine if the
-   required version is deployed.
-
-By defining metadata groups and associating deployments with these groups, you
-ensure that version checks are performed within the relevant scope, maintaining
-consistency and compatibility across your system.
-
-When defining release dependencies, carefully consider how your resources are
-grouped and which metadata attributes are most relevant for determining version
-compatibility across your system.

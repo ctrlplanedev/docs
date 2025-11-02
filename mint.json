@@ -203,13 +203,13 @@
       "group": "Concepts",
       "pages": [
         "concepts/systems",
-        "concepts/resources",
-        "concepts/runbooks",
-        "concepts/jobs",
-        "concepts/job-agents",
         "concepts/deployments",
         "concepts/releases",
-        "concepts/environments"
+        "concepts/environments",
+        "concepts/resources",
+        "concepts/jobs",
+        "concepts/job-agents",
+        "concepts/runbooks"
       ]
     },
     {
@@ -249,12 +249,12 @@
     {
       "group": "Policies",
       "pages": [
-        "policies/resource-filtering",
-        "policies/governanace",
         "policies/deployment-control",
+        "policies/resource-filtering",
         "policies/release-management",
         "policies/release-channels",
-        "policies/rollout"
+        "policies/rollout",
+        "policies/governanace"
       ]
     }
   ],

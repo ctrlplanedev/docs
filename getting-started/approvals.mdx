@@ -19,12 +19,16 @@ explicit approval or rejection from authorized team members.
 
 ## Guide
 
-Assumes you have a deployment pipeline already created. If not, you can create
-one by following the [Getting Started](/getting-started/first-deployment) guide.
+This guide assumes you have a deployment already created. If not, follow the
+[First Deployment](/getting-started/first-deployment) guide.
 
-1. Go to the systems view and click on your environment in the table header.
-2. Click `Approval & Governance` in the left sidebar.
-3. Toggle `Is approval required` to `Yes`.
+1. Navigate to your system in the Ctrlplane UI
+2. Click on an environment in the environments view
+3. Go to the `Policies` tab
+4. Add or edit the Approval policy
+5. Enable `Require approval before deployment`
+6. Save your changes
 
-Now, when you create a new release, it will pause at the Manual Approval
-Required step and wait for you to approve the deployment.
+Now, when you create a new deployment version for this environment, jobs will
+pause and wait for manual approval before executing. Approvers can review the
+deployment details and either approve or reject the deployment.

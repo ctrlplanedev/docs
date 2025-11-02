@@ -1,33 +1,54 @@
 ---
-title: Release Management Policies
+title: Version Management Policies
 description: |
-  Control how multiple releases are handled in your deployment pipeline to prevent conflicts and ensure orderly execution.
+  Control how multiple deployment versions are handled in your pipeline to
+  prevent conflicts and ensure orderly execution.
 ---
 
-## Release Sequencing
+## Version Sequencing
 
-Release sequencing policies determine how Ctrlplane handles pending releases when a new one is triggered. This prevents deployment conflicts and maintains infrastructure stability.
+Version sequencing policies determine how Ctrlplane handles pending deployments
+when a new version is created. This prevents deployment conflicts and maintains
+infrastructure stability.
 
 ### Available Strategies
 
-- **Cancel Pending Releases**
-  - When activated: Immediately cancels any pending releases when a new release is triggered
-  - Best for: Environments where only the latest release matters
-  - Example use case: Development environments where you want to skip intermediate versions
-  
-- **Await Pending Releases**
-  - When activated: New releases wait for pending releases to complete before starting
+- **Cancel Pending Deployments**
+  - When activated: Immediately cancels pending jobs for older versions when a
+    new version is triggered
+  - Best for: Environments where only the latest version matters
+  - Example use case: Development environments where you want to skip
+    intermediate versions and always deploy the latest
+
+- **Await Pending Deployments**
+  - When activated: New version deployments wait for pending deployments to
+    complete before starting
   - Best for: Production environments requiring sequential, complete deployments
-  - Example use case: Systems with database migrations that must execute in order
+  - Example use case: Systems with database migrations that must execute in
+    version order
 
 ### Configuration
 
-Configure release sequencing at the system or environment level:
+Configure version sequencing at the environment level via policies:
 
-1. Navigate to System Settings or Environment Settings
-2. Select "Release Management" 
+1. Navigate to Environment Settings → Policies
+2. Add or edit the Version Sequencing policy
 3. Choose your preferred strategy
 4. Save your changes
+
+### How It Works
+
+When you create a new deployment version `v2.0.0`:
+
+**Cancel Pending Deployments**:
+- Any jobs for `v1.9.0` that haven't started are cancelled
+- Resources immediately begin deploying `v2.0.0`
+- Useful when intermediate versions can be skipped
+
+**Await Pending Deployments**:
+- Jobs for `v1.9.0` complete first
+- Once `v1.9.0` finishes, `v2.0.0` begins
+- Ensures all versions are deployed in order
 
 ### Benefits
 
@@ -35,3 +56,4 @@ Configure release sequencing at the system or environment level:
 - Ensures correct execution order
 - Maintains deployment history
 - Reduces risk during complex deployments
+- Supports different deployment strategies per environment

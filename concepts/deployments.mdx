@@ -1,104 +1,165 @@
 ---
 title: Deployments
 description: |
-  Deployments in Ctrlplane are the central organizing principle for managing and
-  orchestrating the release of your software or infrastructure across various
-  environments within a system. A deployment represents a complete, end-to-end
-  process for delivering changes to your system, encompassing everything from
-  the initial code commit to the final production release.
+  Deployments in Ctrlplane represent a deployable service or application within
+  a system. They manage multiple versions of your software and orchestrate how
+  those versions are deployed across environments and resources.
 ---
 
 ## What is a Deployment?
 
 A deployment in Ctrlplane is:
 
-1. **A Logical Unit**: It typically represents a single service, application, or
-   piece of infrastructure.
+1. **A Logical Unit**: Represents a single service, application, or piece of
+   infrastructure that you want to deploy and manage.
 
-2. **System-Bound**: Each deployment is assigned to a specific system, which
-   contains multiple environments (e.g., QA, Staging, Production). When you
-   create a deployment, it automatically becomes part of all environments within
-   that system.
+2. **System-Bound**: Each deployment belongs to a specific system, which
+   contains multiple environments (e.g., Development, Staging, Production).
 
-3. **Version Control**: It manages multiple releases (versions) of your software
-   or infrastructure configuration.
+3. **Version Manager**: Manages multiple deployment versions - each representing
+   a specific iteration of your software (e.g., git commits, docker tags, build
+   numbers).
 
-4. **Pipeline Definition**: It includes a defined CI/CD pipeline that outlines
-   the steps for building, testing, and deploying your changes.
+4. **Job Configuration**: Defines how deployment jobs should be executed via job
+   agent configuration.
 
-5. **Release Manager**: It groups and organizes releases, providing a historical
-   view of all deployments.
+5. **Resource Selector**: Optionally filters which resources within a system can
+   be deployment targets.
 
 ## Key Components of a Deployment
 
-A deployment in Ctrlplane typically includes:
+A deployment in Ctrlplane consists of:
 
-1. **Releases**: Individual versions of your software or infrastructure
-   configuration.
+1. **Deployment Versions**: Individual versions of your software or
+   infrastructure (e.g., `v1.2.3`, `main-abc123`). Each version can have:
 
-2. **CI/CD Pipeline**: The defined process for deploying releases.
+   - Name and tag for identification
+   - Configuration data
+   - Job agent specific configuration
+   - Status (building, ready, failed, rejected)
+   - Dependencies on other deployment versions
 
-3. **System and Environment Association**: The deployment is part of all
-   environments within its assigned system, allowing for consistent deployment
-   across different stages.
+2. **Job Agent Configuration**: Specifies how jobs should be executed when
+   deploying this deployment, including:
 
-4. **Job Configurations**: Specifications for the jobs that will be created and
-   run for each release and resource.
+   - Which job agent to use (Kubernetes, GitHub Actions, etc.)
+   - Agent-specific configuration (manifests, workflow files, etc.)
 
-5. **Variables**: Resource-specific variables that allow the same pipeline to be
-   used across different environments.
+3. **Resource Selector**: Optional filter to limit which resources can be
+   deployment targets.
 
-## Systems, Environments, and Resource Filtering
+4. **Retry and Timeout Settings**: Configure automatic retry behavior and job
+   timeouts.
 
-Ctrlplane uses a hierarchical structure to manage deployments:
+## How Deployments Work
 
-1. **Systems**: The top-level organizational unit. A system contains multiple
-   environments and is associated with one or more deployments.
+### The Release Target Concept
 
-2. **Environments**: Subsets of a system (e.g., QA, Staging, Production). Each
-   environment can be configured with specific settings and policies.
+Ctrlplane creates **release targets** - the junction between a deployment,
+environment, and resource. A release target represents "what should deployment X
+be at for resource Y in environment Z?"
 
-3. **Environment Configuration**: Each environment is configured with label
-   filters to determine which resources fall under that environment. This allows
-   for fine-grained control over where deployments are applied.
+For example:
 
-4. **Resource Filtering**: When a release is created, Ctrlplane uses the
-   environment's label filters to identify matching resources. It then runs the
-   appropriate jobs for each of these resources.
+- Deployment: `web-app`
+- Environment: `production`
+- Resource: `k8s-cluster-us-east`
+- Desired Version: `v1.2.3`
 
-5. **Inter-Environment Policies**: Environments are connected by policies that
-   determine when and how jobs should run. These policies control the
-   progression of deployments through environments (e.g., from Staging to
-   Production).
+This release target tracks that `web-app v1.2.3` should be deployed to
+`k8s-cluster-us-east` in the `production` environment.
 
-## Deployment Workflow
+### Deployment Workflow
 
-1. **Deployment Creation**: A deployment is created and assigned to a system.
+1. **Create a Deployment**: Define a new deployment within a system, specifying
+   its name, job agent configuration, and resource selector.
 
-2. **Release Initiation**: A new release is created within the deployment.
+2. **Push a Deployment Version**: When you have a new version to deploy (from
+   your CI/CD pipeline), create a deployment version with a unique tag.
 
-3. **Environment Processing**: For each environment in the system:
+3. **Release Target Generation**: Ctrlplane automatically creates release
+   targets for each combination of:
 
-   - The environment's label filters are applied to identify relevant resources.
-   - Jobs are created for each matching resource based on the deployment's job
-     definitions.
+   - The deployment
+   - Each environment in the system
+   - Each resource matching both the environment's selector and the deployment's
+     selector
 
-4. **Policy Enforcement**: Inter-environment policies determine when jobs can
-   run, allowing for controlled progression through environments.
+4. **Policy Evaluation**: Policies determine which version should be deployed to
+   each release target based on:
 
-5. **Job Execution**: Jobs are executed on the identified resources, applying
-   the release changes.
+   - Version dependencies
+   - Approval requirements
+   - Environment progression rules
+   - Release channels
+
+5. **Job Creation**: When a release target's desired version changes, Ctrlplane
+   creates a job to deploy that version to the resource.
+
+6. **Job Execution**: The job agent executes the deployment job in your CI/CD
+   system.
+
+## Resource Selection
+
+Deployments can specify a resource selector to control which resources are valid
+targets. Resources must match both:
+
+- The environment's resource selector
+- The deployment's resource selector (if specified)
+
+This enables use cases like:
+
+- A frontend deployment that only deploys to web-server resources
+- A database deployment that only targets database resources
+- Region-specific deployments
 
 ## Creating and Managing Deployments
 
-Deployments can be created and managed in two primary ways:
+### Via UI or API
 
-1. **Manual Creation**: Through the Ctrlplane UI or API, specifying the system
-   it belongs to.
+Create deployments through the Ctrlplane UI or REST API, specifying:
 
-2. **Automated Creation**: By including a `.ctrlplane.yaml` file in your Git
-   repository. This method allows for automatic deployment creation when new
-   repositories are added, with system assignment specified in the
-   configuration.
+- Name and slug (unique within the system)
+- System ID
+- Job agent and configuration
+- Resource selector (optional)
+- Retry count and timeout settings
 
-Example `.ctrlplane.yaml`:
+### Example API Request
+
+```json
+{
+  "name": "Web Application",
+  "slug": "web-app",
+  "systemId": "550e8400-e29b-41d4-a716-446655440000",
+  "jobAgentId": "660e8400-e29b-41d4-a716-446655440000",
+  "jobAgentConfig": {
+    "manifest": "..."
+  },
+  "resourceSelector": {
+    "type": "comparison",
+    "operator": "equals",
+    "key": "kind",
+    "value": "kubernetes-cluster"
+  }
+}
+```
+
+## Creating Deployment Versions
+
+Deployment versions are typically created from your CI/CD pipeline after a
+successful build:
+
+```bash
+curl -X POST https://api.ctrlplane.dev/v1/deployment-versions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "deploymentId": "550e8400-e29b-41d4-a716-446655440000",
+    "tag": "v1.2.3",
+    "name": "Release 1.2.3",
+    "config": {
+      "imageTag": "v1.2.3",
+      "commitSha": "abc123"
+    }
+  }'
+```

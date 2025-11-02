@@ -143,16 +143,17 @@ triggered.
 3. Select your job agent from the dropdown
 4. Add this simple script:
    ```bash
-   echo "Deploying Hello World {{.release.version}} to {{.resource.name}}"
+   echo "Deploying Hello World {{.version.tag}} to {{.resource.name}}"
    ```
 5. Click `Save`
 
-## Create a Release
+## Create a Deployment Version
 
-1. Go to the release page and click `Create Release`
-2. Enter a name like `v1.0.0`
-3. Click `Create`
+1. Navigate to your deployment page
+2. Click `Create Version`
+3. Enter a tag like `v1.0.0`
+4. Click `Create`
 
-## Deploy the Release
+## Watch the Deployment
 
-When the release is created, the job agent will be triggered. You should see this output in your job agent terminal:
+When the deployment version is created, Ctrlplane will create jobs for each resource in each environment. The job agent will pick up these jobs and execute them. You should see output in your job agent terminal:

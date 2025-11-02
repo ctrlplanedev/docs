@@ -1,35 +1,79 @@
 ---
 title: Release Channels
 description: |
-  Release channels allow you to specify which release of a given deployment can
-  be deployed to a particular environment.
+  Release channels allow you to specify which deployment versions can be
+  deployed to particular environments, enabling controlled rollouts of different
+  version streams.
 ---
 
 ## Release Channel Policies
 
-Release channel policies define the rules for which releases can be deployed to
-specific environments. This ensures that only the appropriate versions of a
-deployment are released to the right environments, maintaining stability and
-control over the deployment process.
+Release channel policies define filter rules that determine which deployment
+versions are eligible for deployment to specific environments. This ensures
+only appropriate versions reach each environment, maintaining stability and
+control.
+
+### What are Release Channels?
+
+Release channels allow you to create different deployment streams:
+
+- **Stable Channel**: Only production-ready, fully tested versions
+- **Beta Channel**: Pre-release versions for early testing
+- **Canary Channel**: Latest builds for gradual rollouts
+- **Branch Channels**: Specific git branches for different environments
 
 ### Common Use Cases
 
-#### Git Commits
+#### Git Branch-Based Deployments
 
-When any git commit could be a release:
+When any git commit creates a deployment version:
 
-- Deploying only the `main` branch releases to the production environment to
-  ensure stability.
-- Allowing any branch to be deployed to the QA environment for comprehensive
-  testing and validation.
+- Deploy only `main` branch versions to production for stability
+- Allow any branch to deploy to QA for comprehensive testing
+- Deploy `release/*` branches to staging for pre-production validation
 
-#### Major Releases
+Example filter:
 
-When deploying third party software its common to only want to upgrade to
-minor versions. This means that:
+```json
+{
+  "type": "comparison",
+  "operator": "regex",
+  "key": "metadata.branch",
+  "value": "^main$"
+}
+```
 
-- Only minor version updates (e.g., from `1.1` to `1.2`) are automatically
-  deployed to environments.
-- Major version updates (e.g., from `1.x` to `2.0`) are not automatically
-  deployed. This is because such updates may necessitate policy adjustments to
-  accommodate releases that need manual oversight.
+#### Semantic Version Filtering
+
+When deploying third-party software or managing version compatibility:
+
+- Only deploy minor version updates (e.g., `1.1` to `1.2`) automatically
+- Require manual approval for major versions (e.g., `1.x` to `2.0`)
+- Allow patch versions (`1.2.3` to `1.2.4`) in production
+
+Example for allowing only v1.x versions:
+
+```json
+{
+  "type": "comparison",
+  "operator": "regex",
+  "key": "tag",
+  "value": "^v1\\."
+}
+```
+
+### Configuration
+
+Configure release channel policies in the environment or deployment settings:
+
+1. Navigate to Environment Settings → Policies
+2. Add a Release Channel policy
+3. Define your version selector filter
+4. Save and apply
+
+### Benefits
+
+- Prevent accidental deployment of unstable versions
+- Enable progressive delivery strategies
+- Support multiple release streams
+- Maintain version compatibility requirements

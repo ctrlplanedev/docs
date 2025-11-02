@@ -10,54 +10,116 @@ Variables in Ctrlplane make your deployments dynamic and adaptable. They let you
 
 ## Variable Types
 
-Ctrlplane supports four primary variable types:
+Ctrlplane supports several variable sources:
 
-- **Environment Variables**: Values specific to each environment (dev, staging, production)
-  - Example: `database_url`, `log_level`, `api_endpoint`
-  
-- **System Variables**: Values shared across your entire system
-  - Example: `company_name`, `team_id`, `global_timeout`
-  
 - **Resource Variables**: Values specific to individual resources
-  - Example: `server_ip`, `instance_size`, `memory_allocation`
-  
-- **Release Variables**: Values tied to specific software releases
-  - Example: `version`, `release_notes`, `build_commit`
+  - Example: `namespace`, `cluster_endpoint`, `region`
+  - Defined on each resource
+- **Deployment Version Config**: Values from the deployment version configuration
+  - Example: `imageTag`, `gitSha`, `buildNumber`
+  - Passed when creating a deployment version
+- **Job Variables**: Values specific to a job execution
+
+  - Example: Custom parameters for the job
+  - Can reference workspace secrets
+
+- **Computed Variables**: System-provided variables about the deployment context
+  - Example: `resource.name`, `version.tag`, `environment.name`
 
 ## Defining Variables
 
-Variables can be defined in the Ctrlplane UI or API:
+### Resource Variables
 
-1. Navigate to the appropriate section (Environment, System, Resource, or Release)
-2. Select "Variables" or "Configuration"
-3. Add variable key-value pairs
-4. Save your changes
+Define variables on resources via the UI or API:
 
-## Using Variables in Deployments
+1. Navigate to a resource in the Ctrlplane UI
+2. Go to the "Variables" tab
+3. Add key-value pairs
+4. Can reference workspace secrets for sensitive values
 
-Reference variables in your deployment scripts using double curly braces:
+### Deployment Version Config
+
+Pass configuration when creating a deployment version:
 
 ```bash
-# Environment variable
-echo "Connecting to database at {{.environment.database_url}}"
-
-# System variable
-echo "Deploying for {{.system.company_name}}"
-
-# Resource variable
-echo "Server IP address: {{.resource.server_ip}}"
-
-# Release variable
-echo "Deploying version {{.release.version}}"
+curl -X POST https://api.ctrlplane.dev/v1/deployment-versions \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: $CTRLPLANE_API_KEY" \
+  -d '{
+    "deploymentId": "deployment-id",
+    "tag": "v1.2.3",
+    "config": {
+      "imageTag": "v1.2.3",
+      "gitSha": "abc123",
+      "environment": "production"
+    }
+  }'
 ```
 
-## Variable Inheritance and Precedence
+## Using Variables in Job Configurations
 
-When variables with the same name exist at different levels:
+Reference variables in your job agent configuration using template syntax. The
+exact syntax depends on your job agent:
 
-1. Resource variables take highest precedence
-2. Release variables are next
-3. Environment variables follow
-4. System variables have lowest precedence
+### Kubernetes Job Agent
 
-This hierarchy lets you define defaults at the system level while overriding them for specific environments, releases, or resources.
+```yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: deploy-{{.version.tag}}
+spec:
+  template:
+    spec:
+      containers:
+        - name: deploy
+          image: myapp:{{.config.imageTag}}
+          env:
+            - name: GIT_SHA
+              value: "{{.config.gitSha}}"
+            - name: NAMESPACE
+              value: "{{.resource.variables.namespace}}"
+```
+
+### Script Executor Agent
+
+```bash
+#!/bin/bash
+echo "Deploying {{.version.tag}} to {{.resource.name}}"
+echo "Image: {{.config.imageTag}}"
+echo "Namespace: {{.resource.variables.namespace}}"
+kubectl set image deployment/myapp myapp={{.config.imageTag}} \
+  -n {{.resource.variables.namespace}}
+```
+
+## Available Variables
+
+When executing a job, these variables are available:
+
+- `{{.version.tag}}`: The deployment version tag (e.g., `v1.2.3`)
+- `{{.version.name}}`: The deployment version name
+- `{{.deployment.name}}`: The deployment name
+- `{{.deployment.slug}}`: The deployment slug
+- `{{.resource.name}}`: The resource name
+- `{{.resource.identifier}}`: The resource identifier
+- `{{.resource.kind}}`: The resource kind
+- `{{.resource.variables.KEY}}`: Resource variable values
+- `{{.environment.name}}`: The environment name
+- `{{.config.KEY}}`: Deployment version config values
+
+## Best Practices
+
+1. **Use Resource Variables**: Store infrastructure-specific values (namespaces,
+   endpoints) as resource variables
+
+2. **Version Config for Build Info**: Pass build metadata (image tags, git SHAs)
+   in deployment version config
+
+3. **Secrets Management**: Reference workspace secrets in resource variables for
+   sensitive data
+
+4. **Consistent Naming**: Use consistent variable names across resources for
+   easier management
+
+5. **Documentation**: Document required variables for each deployment in your
+   team's runbooks

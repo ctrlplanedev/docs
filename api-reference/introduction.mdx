@@ -1,30 +1,141 @@
 ---
 title: "API Introduction"
 description: |
-  Complete reference for the Ctrlplane REST API
+  Complete reference for the Ctrlplane REST API - programmatically manage
+  deployments, versions, resources, and policies.
 ---
 
 ## API Overview
 
-The Ctrlplane API enables programmatic access to all platform functionality, allowing you to automate deployments, manage resources, and integrate with your existing tools.
+The Ctrlplane API provides programmatic access to all platform functionality,
+enabling you to:
+
+- Create and manage deployments and deployment versions
+- Register and update resources
+- Define policies and configure environments
+- Trigger and monitor deployment jobs
+- Integrate Ctrlplane into your CI/CD pipelines
 
 ## API Structure
 
-Our API follows OpenAPI standards (formerly Swagger) with these key features:
+The Ctrlplane API follows REST principles and OpenAPI 3.0 standards:
 
-- **RESTful Design**: Resource-based endpoints with standard HTTP methods
-- **JSON Payloads**: Consistent request/response format
-- **Key Authentication**: Simple API key authentication
-- **Comprehensive Endpoints**: Complete coverage of platform functionality
+- **RESTful Design**: Resource-based endpoints with standard HTTP methods (GET,
+  POST, PATCH, DELETE)
+- **JSON Format**: All requests and responses use JSON
+- **API Key Authentication**: Simple bearer token authentication via
+  `x-api-key` header
+- **Consistent Responses**: Standardized error handling and response structure
+- **Idempotent Operations**: Safe retries for PUT/PATCH operations
 
-## Documentation Structure
+## Authentication
 
-The API documentation includes:
+All API requests require authentication using an API key:
 
-- HTTP methods (GET, POST, PUT, DELETE)
-- Required and optional parameters
-- Request/response schemas with examples
-- Authentication requirements
-- Status codes and error handling
+```bash
+curl https://api.ctrlplane.dev/v1/workspaces/{workspaceId}/deployments \
+  -H "x-api-key: your-api-key-here"
+```
 
-View the complete [OpenAPI specification](https://github.com/ctrlplanedev/ctrlplane/blob/main/openapi.v1.json) on GitHub.
+Get your API key from: **Workspace Settings → API Keys** in the Ctrlplane UI.
+
+## Base URL
+
+```
+https://api.ctrlplane.dev/v1
+```
+
+For self-hosted installations, use your instance URL.
+
+## Common Workflows
+
+### Creating a Deployment Version
+
+Typically called from your CI/CD pipeline after a successful build:
+
+```bash
+curl -X POST https://api.ctrlplane.dev/v1/deployment-versions \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: $CTRLPLANE_API_KEY" \
+  -d '{
+    "deploymentId": "deployment-uuid",
+    "tag": "v1.2.3",
+    "name": "Release 1.2.3",
+    "config": {
+      "imageTag": "v1.2.3",
+      "gitSha": "abc123"
+    }
+  }'
+```
+
+### Registering Resources
+
+Resource providers sync infrastructure to Ctrlplane:
+
+```bash
+curl -X POST https://api.ctrlplane.dev/v1/workspaces/{workspaceId}/resources \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: $CTRLPLANE_API_KEY" \
+  -d '{
+    "resources": [{
+      "identifier": "k8s-prod-cluster",
+      "name": "Production Kubernetes Cluster",
+      "kind": "kubernetes-cluster",
+      "version": "1.0",
+      "metadata": {
+        "environment": "production",
+        "region": "us-east-1"
+      }
+    }]
+  }'
+```
+
+## SDK Support
+
+For easier integration, use the official SDKs:
+
+- **Node.js**: `@ctrlplane/node-sdk`
+- **Python**: Coming soon
+- **Go**: Coming soon
+
+```typescript
+import { CtrlplaneClient } from "@ctrlplane/node-sdk";
+
+const client = new CtrlplaneClient({
+  apiKey: process.env.CTRLPLANE_API_KEY,
+});
+
+await client.createDeploymentVersion({
+  deploymentId: "deployment-id",
+  tag: "v1.2.3",
+  name: "Release 1.2.3",
+});
+```
+
+## Error Handling
+
+The API uses standard HTTP status codes:
+
+- `200 OK`: Successful request
+- `201 Created`: Resource created successfully
+- `400 Bad Request`: Invalid request parameters
+- `401 Unauthorized`: Invalid or missing API key
+- `404 Not Found`: Resource not found
+- `409 Conflict`: Resource already exists (e.g., duplicate identifier)
+- `500 Internal Server Error`: Server error
+
+Error responses include details:
+
+```json
+{
+  "error": "Validation failed",
+  "details": {
+    "tag": "Tag must be unique within deployment"
+  }
+}
+```
+
+## OpenAPI Specification
+
+View the complete [OpenAPI specification](https://github.com/ctrlplanedev/ctrlplane/blob/main/openapi.v1.json)
+on GitHub for detailed schema definitions and all available endpoints.

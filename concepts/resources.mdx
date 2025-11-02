@@ -1,86 +1,206 @@
 ---
 title: Resources
 description: |
-  Resources are the fundamental building blocks of your infrastructure that
-  Ctrlplane discovers, manages, and deploys to. A resource represents any cloud or
-  infrastructure component your applications run on or interact with.
+  Resources represent the infrastructure components that Ctrlplane deploys to -
+  such as Kubernetes clusters, cloud VMs, databases, or any custom infrastructure
+  you manage. Resources are deployment targets that receive your software.
 ---
 
-Think of resources as a unified digital representation of your actual
-infrastructure - whether it's running in AWS, Google Cloud, Azure, or your own
-data centers. Resources bridge the gap between your physical/virtual
-infrastructure and the software that needs to run on it.
+Resources are the deployment targets in Ctrlplane - the actual infrastructure
+where your software runs. They represent any infrastructure component you want
+to deploy to, whether it's a Kubernetes cluster, EC2 instance, database, or
+custom platform.
 
 ## Key Characteristics
 
 Each resource in Ctrlplane has:
 
-- **Identity**: Unique ID and human-readable name
-- **Classification**: Kind (e.g., "ClusterAPI", "VM", "VPC") and version
-- **Configuration**: Structured data specific to the resource type
-- **Metadata**: Key-value attributes providing additional context
-- **Relationships**: Connections to other resources (parent/child, dependencies)
+- **Identifier**: Unique identifier within a workspace (e.g.,
+  `k8s-us-east-prod-cluster`)
+- **Name**: Human-readable display name
+- **Kind**: Resource type (e.g., `kubernetes-cluster`, `ec2-instance`, `database`)
+- **Version**: Schema version for the resource kind
+- **Config**: Structured JSON data specific to the resource type
+- **Metadata**: Key-value pairs used for filtering and selection
+- **Provider**: Optional reference to the resource provider that manages this
+  resource
+- **Workspace**: Every resource belongs to a specific workspace
 
-## Resource Types
+## Resource Metadata
 
-Ctrlplane manages many types of resources, including:
+Metadata is crucial for resource selection in environments and deployments.
+Common metadata includes:
 
-- **Kubernetes Resources**: Clusters, Namespaces, VClusters
-- **Cloud Infrastructure**: VPCs, Subnets, Networks
-- **Compute Resources**: Virtual Machines, Container Instances
-- **Storage Resources**: Disks, Volumes, Object Storage
-- **Custom Resources**: Any infrastructure component you need to track
+- `environment`: "production", "staging", "development"
+- `region`: "us-east-1", "eu-west-1"
+- `cluster`: Kubernetes cluster name
+- `tier`: "web", "database", "cache"
+- Custom attributes specific to your infrastructure
+
+Example resource with metadata:
+
+```json
+{
+  "identifier": "k8s-prod-us-east",
+  "name": "Production Cluster - US East",
+  "kind": "kubernetes-cluster",
+  "version": "1.0",
+  "config": {
+    "clusterEndpoint": "https://k8s-prod.example.com",
+    "namespace": "default"
+  },
+  "metadata": {
+    "environment": "production",
+    "region": "us-east-1",
+    "cloud": "aws"
+  }
+}
+```
 
 ## How Resources Work
 
-### Discovery and Sync
+### Resource Discovery
 
-Ctrlplane automatically discovers resources from your cloud providers through
-periodic scans. Once discovered, resources are:
+Resources are added to Ctrlplane via:
 
-1. Added to your resource inventory
-2. Kept in sync with their actual state in your cloud environment
-3. Made available as deployment targets
+1. **Resource Providers**: Automated discovery from cloud providers (AWS, GCP,
+   Azure, etc.)
+2. **API**: Manual creation via REST API
+3. **Integrations**: Kubernetes operators, Terraform, or custom scripts
+
+### Resource Providers
+
+Resource providers automatically discover and sync resources from external
+systems:
+
+- **AWS Provider**: Discovers EC2 instances, ECS clusters, etc.
+- **Kubernetes Provider**: Discovers clusters and namespaces
+- **GCP Provider**: Discovers GCE instances, GKE clusters, etc.
+- **Azure Provider**: Discovers Azure VMs, AKS clusters, etc.
+- **Custom Providers**: Build your own using the Resource Provider SDK
+
+Providers continuously sync to keep resources up-to-date.
+
+### Resource Selection
+
+Environments and deployments use selectors to filter resources. Selectors query
+resource metadata:
+
+```json
+{
+  "type": "comparison",
+  "operator": "equals",
+  "key": "environment",
+  "value": "production"
+}
+```
+
+Complex selectors support AND, OR, NOT operations for sophisticated filtering.
 
 ### Resource Variables
 
-You can attach variables to resources to control how they behave during
-deployments. These variables can be:
+Attach variables to resources for deployment-specific configuration:
 
-- References to secrets required for access
-- Configuration values for deployments
-- Environment-specific settings
+- Kubernetes namespace names
+- Database connection strings
+- API endpoints
+- Secrets references
+- Custom deployment parameters
+
+Variables can reference workspace secrets for sensitive data.
 
 ### Resource Relationships
 
-Resources often have relationships with other resources. For example:
+Resources can have relationships to other resources:
 
-- A VM belongs to a VPC
-- A Kubernetes Namespace runs on a Cluster
-- A Container Instance uses a Volume
+- **associated_with**: General association (e.g., a VM associated with a VPC)
+- **depends_on**: Dependency relationship (e.g., an app depends on a database)
 
-Ctrlplane automatically detects and maintains these relationships, giving you a
-complete picture of your infrastructure.
+Relationships help model complex infrastructure topologies and can be used in
+deployment policies.
 
-## Why Resources Matter
+## Release Targets
 
-Resources provide critical benefits:
+When you create a deployment in a system, Ctrlplane creates **release targets**
+for each valid combination of:
 
-- **Single Source of Truth**: Comprehensive inventory of all your infrastructure
-- **Environment Visibility**: Clear understanding of what's running where
-- **Deployment Targeting**: Precise control over where code and configurations
-  are deployed
-- **Dependency Management**: Awareness of resource connections and requirements
-- **Security Boundaries**: Clear separation between environments
+- The deployment
+- An environment in the system
+- A resource matching both the environment and deployment selectors
 
-## Getting Started with Resources
+Release targets track what version should be deployed to each resource in each
+environment.
 
-1. **Connect your cloud providers** to discover resources automatically
-2. **Browse your resource inventory** to see what's available
-3. **Tag and organize resources** for better visibility
-4. **Create deployments** that target specific resources
-5. **Track resource health** and relationships through visualizations
+## Creating Resources
 
-Resources are the foundation of Ctrlplane's ability to provide controlled,
-observable, and reliable deployments across your entire infrastructure
-landscape.
+### Via API
+
+```bash
+curl -X POST https://api.ctrlplane.dev/v1/workspaces/{workspaceId}/resources \
+  -H "Content-Type: application/json" \
+  -d '{
+    "resources": [{
+      "identifier": "k8s-prod-us-east",
+      "name": "Production Cluster - US East",
+      "kind": "kubernetes-cluster",
+      "version": "1.0",
+      "config": {
+        "endpoint": "https://k8s.example.com"
+      },
+      "metadata": {
+        "environment": "production",
+        "region": "us-east-1"
+      }
+    }]
+  }'
+```
+
+### Via Resource Provider
+
+Resource providers automatically sync resources:
+
+```typescript
+import { CtrlplaneClient } from "@ctrlplane/node-sdk";
+
+const client = new CtrlplaneClient({
+  apiKey: process.env.CTRLPLANE_API_KEY,
+});
+
+const provider = client.resourceProvider({
+  workspaceId: "workspace-id",
+  name: "my-k8s-provider",
+});
+
+await provider.set([
+  {
+    identifier: "k8s-prod-us-east",
+    name: "Production Cluster - US East",
+    kind: "kubernetes-cluster",
+    version: "1.0",
+    config: { endpoint: "https://k8s.example.com" },
+    metadata: { environment: "production" },
+  },
+]);
+```
+
+## Best Practices
+
+1. **Consistent Metadata**: Use standardized metadata keys across all resources
+   for reliable filtering.
+
+2. **Unique Identifiers**: Ensure resource identifiers are unique and
+   descriptive.
+
+3. **Resource Providers**: Use resource providers for automated discovery rather
+   than manual creation.
+
+4. **Metadata Organization**: Structure metadata hierarchically (e.g.,
+   `cloud.aws.region`).
+
+5. **Regular Sync**: Keep resources in sync with actual infrastructure state.
+
+6. **Resource Variables**: Use resource variables for deployment-specific
+   configuration instead of hardcoding in job configs.
+
+Resources are the deployment targets in Ctrlplane's orchestration system,
+providing flexible infrastructure representation for your deployment workflows.

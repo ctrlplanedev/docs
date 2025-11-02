@@ -1,31 +1,58 @@
 ---
-title: Rollout & Timing
+title: Rollout & Timing Policies
 description: |
-  Controls how and when deployments are rolled out to environments, including
-  incremental rollouts, scheduling deployments during specific windows, and
-  managing release timing to minimize risk and ensure stability during the
-  deployment process.
+  Control how and when deployment versions roll out to environments, including
+  gradual rollouts, deployment windows, and cooldown periods to minimize risk
+  and ensure stability.
 ---
 
 ## Release Windows
 
-Release windows allow you to control when deployments can be released into an
-environment.
+Release windows define time periods when deployments are allowed in an
+environment. Jobs will only execute during these windows.
+
+Use cases:
+- **Maintenance Windows**: Only deploy during off-peak hours
+- **Business Hours**: Restrict production deployments to business hours when
+  teams are available
+- **Freeze Periods**: Block deployments during critical business periods (e.g.,
+  Black Friday, end of quarter)
+
+Example configurations:
+- Monday-Friday, 9am-5pm: Business hours only
+- Daily, 2am-4am: Overnight maintenance window
+- Exclude Dec 15-31: Holiday freeze period
 
 ## Gradual Rollout
 
-Enabling gradual rollouts will spread deployments evenly out over a given
-duration. A default duration of 0ms means that deployments will be rolled out
-immediately.
+Gradual rollout policies spread deployment jobs across resources over a
+specified duration, rather than deploying to all resources simultaneously.
 
-Example values: `10m`, `1h`, `1d`, `1w`
+Benefits:
+- **Risk Mitigation**: Detect issues early before full rollout
+- **Resource Protection**: Avoid overwhelming infrastructure
+- **Monitoring Time**: Observe deployment impact progressively
+
+Configuration:
+- Duration: `10m`, `1h`, `4h`, `1d`
+- Default: `0ms` (immediate, all resources at once)
+
+Example: With `1h` duration and 60 resources, jobs will be triggered
+approximately every minute.
 
 ## Deployment Cooldown
 
-Ceployment cooldown is crucial as it ensures a buffer period between releases.
-This helps in mitigating risks by allowing time to monitor the impact of the
-previous release and address any issues before proceeding with the next one. It
-also prevents overwhelming the system with rapid consecutive deployments,
-maintaining stability and performance.
+Deployment cooldown enforces a minimum time period between successive
+deployments to the same resource in an environment.
 
-- Example values: `5m`, `2h`, `1d`
+Benefits:
+- **Stability**: Allow time to observe deployment impact
+- **Issue Detection**: Prevent hiding problems with rapid redeployments
+- **System Health**: Avoid overwhelming systems with rapid changes
+
+Configuration:
+- Duration: `5m`, `30m`, `2h`, `1d`
+- Applied per-resource in the environment
+
+Example: With `30m` cooldown, after deploying `v1.2.0` to a resource, version
+`v1.2.1` cannot deploy to that resource for 30 minutes.

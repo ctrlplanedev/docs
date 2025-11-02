@@ -1,51 +1,121 @@
 ---
 title: Environments
 description: |
-  Environments are system-level resource groupings that represent distinct deployment stages (like dev, staging, production) and control how software progresses through your infrastructure.
+  Environments represent distinct deployment stages (like dev, staging,
+  production) within a system and control how software progresses through your
+  infrastructure using policies and resource selectors.
 ---
 
-Environments in Ctrqzlplane are organizational units that group related resources
-and deployments within a system. They represent different deployment targets
-like "Development", "Staging", or "Production".
+Environments in Ctrlplane are organizational units within a system that group
+resources and control deployment progression. They represent different stages of
+your deployment pipeline like "Development", "Staging", or "Production".
 
 ## Key Properties
 
-- **ID**: Unique identifier (UUID)
-- **Name**: Human-readable identifier
-- **System ID**: The system this environment belongs to
-- **Directory**: Path structure for organization
+Each environment has:
+
+- **Name**: Human-readable identifier (e.g., "Production", "Staging")
+- **System**: The system this environment belongs to
+- **Directory**: Optional hierarchical path for organization (e.g.,
+  `us-east/production`)
 - **Description**: Additional information about the environment
-- **Policy ID**: References environment policies that control deployment rules
-- **Resource Selector**: Conditions to select which resources belong to this environment
-- **Metadata**: Key-value pairs for additional context
+- **Resource Selector**: Filter that determines which resources belong to this
+  environment
+- **Metadata**: Key-value pairs for additional context (e.g., region, tier)
 
 ## How Environments Work
 
-Environments work with systems to create a matrix of deployment targets. Each
-system can have multiple environments, allowing for deploying a system to
-different environments (dev, staging, production, etc.).
+Environments create a deployment matrix by combining with deployments. For each
+deployment in a system, Ctrlplane creates release targets for every combination
+of:
+
+- The deployment
+- Each environment in the system
+- Each resource matching the environment's resource selector
+
+For example, a system with:
+- 3 deployments (`web-app`, `api`, `database`)
+- 2 environments (`staging`, `production`)
+- 10 resources (5 matching `staging`, 5 matching `production`)
+
+Would create 30 release targets (3 deployments × 2 environments × 5 resources
+each).
+
+## Resource Selectors
+
+Environments use resource selectors to determine which resources they include.
+Selectors are filter expressions based on resource metadata:
+
+```json
+{
+  "type": "comparison",
+  "operator": "equals",
+  "key": "environment",
+  "value": "production"
+}
+```
+
+This enables flexible resource grouping:
+- Region-based environments (resources in `us-east-1`)
+- Tier-based environments (resources tagged `tier:production`)
+- Custom groupings based on any resource metadata
 
 ## Environment Policies
 
-Environments have associated policies that control:
+Each environment can have policies attached that control deployment behavior:
 
-- Approval requirements (manual or automatic)
-- Deployment success criteria (all, some, or optional)
-- Concurrency limits for deployments
-- Rollout durations (gradual deployment)
-- Release sequencing (wait or cancel)
-- Release windows (time periods when deployments are allowed)
+- **Approval Requirements**: Require manual approval before deployments
+- **Deployment Success Criteria**: Define what constitutes a successful rollout
+- **Concurrency Limits**: Limit simultaneous deployments
+- **Rollout Duration**: Control gradual rollout speed
+- **Environment Dependencies**: Require successful deployment in other
+  environments first
+- **Release Windows**: Restrict when deployments can occur
+
+See the [Policies documentation](/policies/deployment-control) for more details.
+
+## Environment Progression
+
+Environments typically form a progression path:
+
+```
+Development → Staging → Production
+```
+
+Policies enforce this progression, ensuring versions are tested in lower
+environments before reaching production.
 
 ## Lifecycle Events
 
-When an environment is updated (particularly its resource selector), the system:
+When an environment's resource selector changes, Ctrlplane:
 
-1. Finds resources that newly match the selector
-2. Finds resources that no longer match the selector
-3. Creates release targets for newly matched resources
-4. Removes release targets for unmatched resources
-5. Dispatches appropriate hooks when resources enter or exit environments
+1. Re-evaluates which resources match the new selector
+2. Creates release targets for newly matching resources
+3. Removes release targets for resources that no longer match
+4. Triggers appropriate deployment jobs based on policies
 
-Environments act as a key organizational and policy enforcement layer in the
-deployment process, controlling how and when deployments can occur to different
-resources within systems.
+## Creating Environments
+
+Create environments via the UI or API:
+
+```json
+{
+  "name": "Production",
+  "systemId": "550e8400-e29b-41d4-a716-446655440000",
+  "directory": "us-east/production",
+  "description": "Production environment for US East region",
+  "resourceSelector": {
+    "type": "comparison",
+    "operator": "equals",
+    "key": "environment",
+    "value": "production"
+  },
+  "metadata": {
+    "region": "us-east-1",
+    "tier": "production"
+  }
+}
+```
+
+Environments are fundamental to Ctrlplane's deployment orchestration, providing
+the structure for controlled, policy-driven rollouts across your infrastructure.
